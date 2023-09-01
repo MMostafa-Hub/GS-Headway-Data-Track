@@ -4,6 +4,5 @@ import pandas as pd
 
 class ResidualComponent(ABC):
     @abstractmethod
-    @staticmethod
-    def transform(time_series: pd.Series) -> pd.Series:
+    def transform(self, time_series: pd.Series) -> pd.Series:
         pass
