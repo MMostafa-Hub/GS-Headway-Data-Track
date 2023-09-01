@@ -26,8 +26,8 @@ class TrendComponent(Component):
         # This implementation I'm not sure about. I think it's not correct.
         # But it's in the legacy code, so I'm keeping it for now.
         trend_component = pd.Series(
-            np.linspace(0, time_period / 30 * self.direction, len(self.time_index))
+            np.linspace(0, time_period / 30 * self.direction, self.time_index.shape[0])
             if self.direction == 1
-            else np.linspace(-1 * time_period / 30, 0, len(self.time_index))
+            else np.linspace(-1 * time_period / 30, 0, self.time_index.shape[0])
         )
         return trend_component * self.magnitude
