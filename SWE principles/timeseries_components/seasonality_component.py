@@ -4,7 +4,7 @@ import numpy as np
 from enum import Enum
 
 
-class SeasonalityPeriod(Enum):
+class Period(Enum):
     DAY = 1
     WEEK = 7
     MONTH = 30
@@ -13,7 +13,7 @@ class SeasonalityPeriod(Enum):
 
 
 class SeasonalityComponent(Component):
-    def __init__(self, time_index: pd.DatetimeIndex, period: SeasonalityPeriod) -> None:
+    def __init__(self, time_index: pd.DatetimeIndex, period: Period) -> None:
         """Initialize the period of the seasonality component.
 
         Args:
@@ -29,7 +29,7 @@ class SeasonalityComponent(Component):
 
     def __total_period(self):
         """Convert the total period to days or hours depending on the period"""
-        if self.period == SeasonalityPeriod.DAY:
+        if self.period == Period.DAY:
             return (self.time_index - self.time_index[0]).seconds / 3600
         else:
             return (self.time_index - self.time_index[0]).days
