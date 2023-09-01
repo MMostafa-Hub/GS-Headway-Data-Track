@@ -12,6 +12,3 @@ class StaticSignalComponent(Component):
     def values(self) -> pd.Series:
         """Add static signal component to a time series."""
         return pd.Series()
-
-
-ssc = StaticSignalComponent(pd.Series(), 1.0)
