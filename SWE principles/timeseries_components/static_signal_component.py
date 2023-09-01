@@ -3,9 +3,9 @@ import pandas as pd
 
 
 class StaticSignalComponent(Component):
-    def __init__(self, time_series: pd.Series, magnitude: float) -> None:
+    def __init__(self, time_index: pd.DatetimeIndex, magnitude: float) -> None:
         """Initialize the magnitude of the static signal component."""
-        super().__init__(time_series)
+        super().__init__(time_index)
         self.magnitude = magnitude
 
     @property

@@ -3,13 +3,13 @@ import pandas as pd
 
 
 class Component(ABC):
-    def __init__(self, time_series: pd.Series) -> None:
+    def __init__(self, time_index: pd.DatetimeIndex) -> None:
         """Initialize the component.
 
         Args:
             time_series (pd.Series): the time series to create the component from
         """
-        self.time_series = time_series
+        self.time_index = time_index
 
     @property
     @abstractmethod

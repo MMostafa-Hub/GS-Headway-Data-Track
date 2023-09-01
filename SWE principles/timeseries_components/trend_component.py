@@ -4,7 +4,7 @@ import pandas as pd
 
 class TrendComponent(Component):
     def __init__(
-        self, time_series: pd.Series, magnitude: float, negative: bool = False
+        self, time_index: pd.DatetimeIndex, magnitude: float, negative: bool = False
     ) -> None:
         """Initialize the magnitude and direction of the trend component.
 
@@ -12,7 +12,7 @@ class TrendComponent(Component):
             magnitude (float): the magnitude of the trend component
             negative (bool, optional): Defaulting the trend to be positive.
         """
-        super().__init__(time_series)
+        super().__init__(time_index)
         self.magnitude = magnitude
         self.direction = -1 if negative else 1
 
