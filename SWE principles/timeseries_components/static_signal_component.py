@@ -1,5 +1,6 @@
 from component import Component
 import pandas as pd
+import numpy as np
 
 
 class StaticSignalComponent(Component):
@@ -11,4 +12,6 @@ class StaticSignalComponent(Component):
     @property
     def values(self) -> pd.Series:
         """Add static signal component to a time series."""
-        return pd.Series()
+        return pd.Series(
+            np.ones(self.time_index.shape[0]) * self.magnitude, index=self.time_index
+        )
