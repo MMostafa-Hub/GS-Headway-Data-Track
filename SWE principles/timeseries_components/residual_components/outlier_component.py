@@ -6,19 +6,13 @@ import numpy as np
 class OutlierComponent(ResidualComponent):
     def __init__(self, outlier_ratio: float) -> None:
         self.outlier_ratio = outlier_ratio
+
+        # These attributes maybe used in the future
         self.anomaly_mask: np.ndarray
         self.outlier_indices: np.ndarray
 
     def transform(self, time_series: pd.Series) -> pd.Series:
-        """
-        Add outliers to the time series data.
-
-        Parameters:
-            time_series (pandas.Series): The time series data.
-
-        Returns:
-            pandas.Series: The time series data with outliers.
-        """
+        """Add outliers to the time series data."""
         # Calculate the number of outliers to add based on the outlier ratio
         num_outliers = int(time_series.shape[0] * self.outlier_ratio)
 
