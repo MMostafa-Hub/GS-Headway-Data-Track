@@ -8,8 +8,8 @@ class OutlierComponent(ResidualComponent):
         self.outlier_ratio = outlier_ratio
 
         # These attributes maybe used in the future
-        self.anomaly_mask: np.ndarray
-        self.outlier_indices: np.ndarray
+        self.anomaly_mask: np.ndarray = np.array([])
+        self.outlier_indices: np.ndarray = np.array([])
 
     def transform(self, time_series: pd.Series) -> pd.Series:
         """Add outliers to the time series data."""

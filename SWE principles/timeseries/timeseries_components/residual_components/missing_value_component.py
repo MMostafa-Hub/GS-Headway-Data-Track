@@ -7,7 +7,7 @@ class MissingValueComponent(ResidualComponent):
     def __init__(self, missing_values_ratio: float) -> None:
         super().__init__()
         self.missing_values_ratio = missing_values_ratio
-        self.missing_values_indices: np.ndarray
+        self.missing_indices: np.ndarray = np.array([])
 
     def transform(self, time_series: pd.Series) -> pd.Series:
         """Add missing values to the time series data within a specified date range."""
