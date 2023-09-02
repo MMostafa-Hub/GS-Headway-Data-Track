@@ -3,16 +3,10 @@ import pandas as pd
 
 
 class MainComponent(ABC):
-    def __init__(self, time_index: pd.DatetimeIndex) -> None:
-        """Initialize the component.
+    def __init__(self):
+        self.time_index: pd.DatetimeIndex = pd.DatetimeIndex()
 
-        Args:
-            time_series (pd.Series): the time series to create the component from
-        """
-        self.time_index = time_index
-
-    @property
     @abstractmethod
-    def values(self) -> pd.Series:
-        """Add a component to a time series."""
+    def generate(self, time_index: pd.DatetimeIndex) -> pd.Series:
+        """Generates the time series component."""
         pass

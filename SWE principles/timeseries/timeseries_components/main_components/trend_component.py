@@ -4,22 +4,20 @@ import numpy as np
 
 
 class TrendComponent(MainComponent):
-    def __init__(
-        self, time_index: pd.DatetimeIndex, magnitude: float, negative: bool = False
-    ) -> None:
+    def __init__(self, magnitude: float, negative: bool = False) -> None:
         """Initialize the magnitude and direction of the trend component.
 
         Args:
             magnitude (float): the magnitude of the trend component
             negative (bool, optional): Defaulting the trend to be positive.
         """
-        super().__init__(time_index)
+        super().__init__()
         self.magnitude = magnitude
         self.direction = -1 if negative else 1
 
-    @property
-    def values(self) -> pd.Series:
+    def generate(self, time_index: pd.DatetimeIndex) -> pd.Series:
         """Create trend component for a time series."""
+        self.time_index = time_index
         # Getting the time period of the time series in days
         time_period = (self.time_index[-1] - self.time_index[0]).days
 

@@ -13,17 +13,17 @@ class Period(Enum):
 
 
 class SeasonalityComponent(MainComponent):
-    def __init__(self, time_index: pd.DatetimeIndex, period: Period) -> None:
+    def __init__(self, period: Period) -> None:
         """Initialize the period of the seasonality component.
 
         Args:
             period (int): the period of the seasonality component in days
         """
-        super().__init__(time_index)
+        super().__init__()
         self.period = period
 
-    @property
-    def values(self) -> pd.Series:
+    def generate(self, time_index: pd.DatetimeIndex) -> pd.Series:
+        self.time_index = time_index
         """Create seasonality component for a time series."""
         return pd.Series(np.sin(2 * np.pi * self.__total_period() / self.period.value))
 
