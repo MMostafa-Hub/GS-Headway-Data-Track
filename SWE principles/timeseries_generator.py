@@ -20,14 +20,15 @@ class TimeSeriesGenerator:
         self.residual_components = residual_components
 
     def generate(self) -> pd.Series:
+        """Generates a time series based on the main and residual components."""
         # Choosing the operation to be performed based on the time series type
         operation = mul if self.multiplicative else add
-        
+
         # Applying the main components
         result_series = pd.Series(
             reduce(operation, [mc.values for mc in self.main_components])
         )
-        
+
         # Applying the residual components
         for rc in self.residual_components:
             result_series = rc.transform(result_series)
