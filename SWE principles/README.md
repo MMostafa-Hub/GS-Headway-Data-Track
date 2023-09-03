@@ -73,7 +73,7 @@ residual_components: {
 ```bash
 python timeseries_client.py
 ```
-3. Check the resulting visualization.\
+3. Check the resulting visualization.
 <p align="center">
     <img src="https://github.com/MMostafa-Hub/Headway-GS-Data-Track-Tasks/blob/main/images/vis.JPG">
 </p>
