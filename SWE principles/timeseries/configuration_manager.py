@@ -1,30 +1,65 @@
 import pandas as pd
 import yaml
-from typing import Any
-from timeseries_simulator import TimeSeriesParams
+from .timeseries_simulator import TimeSeriesParams
+from .timeseries_components.generators.seasonality import SeasonalityGenerator
+from .timeseries_components.generators.trend import TrendGenerator
+from .timeseries_components.transformers.noise import NoiseTransformer
+from .timeseries_components.transformers.outlier import OutlierTransformer
 
 
-class ConfigManager:
-    def __init__(self, path: str = "config.yaml", config_type: str = "yaml") -> None:
-        """Initialize the configuration manager."""
-        self.path = path
-        self.config_type = config_type
-        self.time_series_params: TimeSeriesParams
+class ConfigurationManager:
+    @staticmethod
+    def __params(config: dict) -> TimeSeriesParams:
+        """Unpacks the configuration dictionary and returns the time series parameters."""
+        # Time index parameters
+        time_index_config = config["time_index"]
+        start_date = pd.Timestamp(time_index_config["start_date"])
+        end_date = pd.Timestamp(time_index_config["end_date"])
+        frequency = (
+            f'{time_index_config["sampling_frequency_in_minutes"]}' + "T"
+        )  # T stands for minutes
 
-    def __read_yaml_config(self) -> TimeSeriesParams:
-        """
-        This function returns the yaml configuration file as a TimeSeriesParams object.
-        """
-        with open(self.path) as file:
-            config = yaml.load(file, Loader=yaml.FullLoader)
+        time_index = pd.date_range(start=start_date, end=end_date, freq=frequency)
 
-        start_date = pd.Timestamp(config["start_date"])
-        end_date = pd.Timestamp(config["end_date"])
-        frequency = config["sampling_frequency_in_minutes"] + "T"
+        # Main components parameters
         multiplicative = config["multiplicative"]
 
-    @property
-    def params(self) -> TimeSeriesParams:
-        if self.config_type == "yaml":
-            self.time_series_params = self.__read_yaml_config()
-        return self.time_series_params
+        # Trend component parameters
+        main_components_config = config["main_components"]
+        trend_coefficients = main_components_config["trend"]["coefficients"]
+
+        # Seasonality component parameters
+        seasonality_params_config_list = main_components_config["seasonality"]
+
+        main_components = [TrendGenerator(trend_coefficients)] + [
+            SeasonalityGenerator(**seasonality_params_config)
+            for seasonality_params_config in seasonality_params_config_list
+        ]
+
+        # Residual components parameters
+        residual_components_config = config["residual_components"]
+        noise_params_config = residual_components_config["noise"]
+        outlier_params_config = residual_components_config["outliers"]
+
+        residual_components = [
+            NoiseTransformer(**noise_params_config),
+            OutlierTransformer(**outlier_params_config),
+        ]
+
+        # Creating the time series parameters
+        time_series_params = TimeSeriesParams(
+            time_index=time_index,
+            main_components=main_components,
+            residual_components=residual_components,
+            multiplicative=multiplicative,
+        )
+
+        return time_series_params
+
+    @staticmethod
+    def yaml(path: str) -> TimeSeriesParams:
+        with open(path, "r") as file:
+            config_data = file.read()
+
+        config = yaml.load(config_data, Loader=yaml.FullLoader)
+        return ConfigurationManager.__params(config)

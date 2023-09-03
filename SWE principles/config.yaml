@@ -1,27 +1,40 @@
-# 1 Year of timeseries data with 1 minute sampling frequency
-start_date: "2019-01-01"
-end_date: "2020-01-01"
-sampling_frequency_in_minutes: 1 # 1 minute
-multiplicative: True # "additive" -> False, "multiplicative" -> True
+## Configuration file for the time series simulator
+## You can change the values of the parameters to generate different datasets
+## But make sure that the parameters are valid
+## The configuration can be extended to include more parameters and components
+## Check the documentation for more details
 
-# Main Components
-main_components: {
-  "trend": {
-    # directions are specified by the sign of the level
-    "level": 0.5
-  },
-  "seasonality": {
-    # period 1: 1 day
-    "periods": [ 365, 30, 7 ],
-  },
+# Time index parameters
+# 1 Year of timeseries data with 1 minute sampling frequency
+time_index: {
+  start_date: 2019-01-01,
+  end_date: 2020-01-01,
+  sampling_frequency_in_minutes: 30 # 1 minute
 }
-# Residual Components
-residual_components: {
-  "noise": {
-    "noise_level": 0.1
+
+# Main components parameters
+multiplicative: False,
+main_components: {
+  trend: {
+    coefficients: [0.5, 0.1] ,
   },
-  "outliers": {
-    "outliers_percentage": 0.2
+  # You can add more than one seasonality component
+  seasonality: [
+    {
+      in_days: False,
+      period: 30, # Monthly
+      amplitude: 5
+    },
+  ] ,
+}
+
+# Residual components parameters
+residual_components: {
+  noise: {
+    noise_level: 0.001
+  },
+  outliers: {
+    outlier_ratio: 0.0001
   },
 }
 

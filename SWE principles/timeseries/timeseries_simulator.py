@@ -1,9 +1,6 @@
 import pandas as pd
 from typing import List
-
-from .timeseries_components.transformers.transformer import (
-    Transformer,
-)
+from .timeseries_components.transformers.transformer import Transformer
 from .timeseries_components.generators.generator import Generator
 from operator import mul, add
 from functools import reduce
@@ -12,9 +9,7 @@ from dataclasses import dataclass
 
 @dataclass
 class TimeSeriesParams:
-    start_date: pd.Timestamp
-    end_date: pd.Timestamp
-    frequency: str
+    time_index: pd.DatetimeIndex
     main_components: List[Generator]
     residual_components: List[Transformer]
     multiplicative: bool = True
@@ -26,19 +21,12 @@ class TimeSeriesSimulator:
         time_series_params: TimeSeriesParams,
     ) -> None:
         """Initialize the time series generator."""
-        self.start_date = time_series_params.start_date
-        self.end_date = time_series_params.end_date
-        self.frequency = time_series_params.frequency
+        self.time_index = time_series_params.time_index
         self.multiplicative = time_series_params.multiplicative
         self.main_components = time_series_params.main_components
         self.residual_components = time_series_params.residual_components
 
-        # Creating the time index
-        self.time_index = pd.date_range(
-            start=self.start_date, end=self.end_date, freq=self.frequency
-        )
-
-    def generate(self) -> pd.Series:
+    def simulate(self) -> pd.Series:
         """Generates a time series based on the main and residual components."""
         # Choosing the operation to be performed based on the time series type
         operation = mul if self.multiplicative else add

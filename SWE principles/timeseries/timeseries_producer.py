@@ -2,10 +2,9 @@ import pandas as pd
 
 
 class TimeSeriesProducer:
-    def __init__(self, path: str, time_series: pd.Series) -> None:
-        self.path = path
-        self.time_series = time_series
+    """This class is responsible for writing the time series to any format."""
 
-    def to_csv(self):
+    @staticmethod
+    def csv(path: str, time_series: pd.Series):
         """Writes the time series to a CSV file."""
-        self.time_series.to_csv(self.path, index=False)
+        time_series.to_csv(path, index=False)
