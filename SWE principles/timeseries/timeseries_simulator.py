@@ -20,7 +20,7 @@ class TimeSeriesParams:
     multiplicative: bool = True
 
 
-class TimeSeriesGenerator:
+class TimeSeriesSimulator:
     def __init__(
         self,
         time_series_params: TimeSeriesParams,
