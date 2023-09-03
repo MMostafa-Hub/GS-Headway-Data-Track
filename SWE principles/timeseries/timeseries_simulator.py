@@ -1,30 +1,37 @@
 import pandas as pd
 from typing import List
-from timeseries_components.main_components.main_component import MainComponent
-from timeseries_components.residual_components.residual_component import (
-    ResidualComponent,
+
+from .timeseries_components.transformers.transformer import (
+    Transformer,
 )
+from .timeseries_components.generators.generator import Generator
 from operator import mul, add
 from functools import reduce
+from dataclasses import dataclass
+
+
+@dataclass
+class TimeSeriesParams:
+    start_date: pd.Timestamp
+    end_date: pd.Timestamp
+    frequency: str
+    main_components: List[Generator]
+    residual_components: List[Transformer]
+    multiplicative: bool = True
 
 
 class TimeSeriesGenerator:
     def __init__(
         self,
-        start_date: pd.Timestamp,
-        end_date: pd.Timestamp,
-        frequency: str,
-        main_components: List[MainComponent],
-        residual_components: List[ResidualComponent],
-        multiplicative: bool = True,
+        time_series_params: TimeSeriesParams,
     ) -> None:
         """Initialize the time series generator."""
-        self.start_date = start_date
-        self.end_date = end_date
-        self.frequency = frequency
-        self.multiplicative = multiplicative
-        self.main_components = main_components
-        self.residual_components = residual_components
+        self.start_date = time_series_params.start_date
+        self.end_date = time_series_params.end_date
+        self.frequency = time_series_params.frequency
+        self.multiplicative = time_series_params.multiplicative
+        self.main_components = time_series_params.main_components
+        self.residual_components = time_series_params.residual_components
 
         # Creating the time index
         self.time_index = pd.date_range(

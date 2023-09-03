@@ -1,11 +1,11 @@
-from residual_component import ResidualComponent
+from .transformer import Transformer
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from typing import Tuple
 
 
-class NormalizationComponent(ResidualComponent):
+class NormalizationComponent(Transformer):
     def __init__(self, feature_range: Tuple[int, int]) -> None:
         super().__init__()
         self.feature_range = feature_range

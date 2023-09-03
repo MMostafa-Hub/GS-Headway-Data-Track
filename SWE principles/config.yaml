@@ -1,0 +1,29 @@
+# 1 Year of timeseries data with 1 minute sampling frequency
+start_date: "2019-01-01"
+end_date: "2020-01-01"
+sampling_frequency_in_minutes: 1 # 1 minute
+multiplicative: True # "additive" -> False, "multiplicative" -> True
+
+# Main Components
+main_components: {
+  "trend": {
+    # directions are specified by the sign of the level
+    "level": 0.5
+  },
+  "seasonality": {
+    # period 1: 1 day
+    "periods": [ 365, 30, 7 ],
+  },
+}
+# Residual Components
+residual_components: {
+  "noise": {
+    "noise_level": 0.1
+  },
+  "outliers": {
+    "outliers_percentage": 0.2
+  },
+}
+
+# Number of generated datasets
+n_datasets: 10

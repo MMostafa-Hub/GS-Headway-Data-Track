@@ -1,9 +1,9 @@
-from residual_component import ResidualComponent
+from .transformer import Transformer
 import numpy as np
 import pandas as pd
 
 
-class MissingValueComponent(ResidualComponent):
+class MissingValueComponent(Transformer):
     def __init__(self, missing_values_ratio: float) -> None:
         super().__init__()
         self.missing_values_ratio = missing_values_ratio

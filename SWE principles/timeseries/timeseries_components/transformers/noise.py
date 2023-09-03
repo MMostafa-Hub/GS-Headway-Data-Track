@@ -1,9 +1,9 @@
-from residual_component import ResidualComponent
+from .transformer import Transformer
 import pandas as pd
 import numpy as np
 
 
-class NoiseComponent(ResidualComponent):
+class NoiseComponent(Transformer):
     def __init__(self, noise_level: float) -> None:
         super().__init__()
         self.noise_level = noise_level
@@ -17,4 +17,4 @@ class NoiseComponent(ResidualComponent):
                 if self.noise_level > 0
                 else 0
             )
-        return pd.Series((time_series + noise)[:, 0])
+        return pd.Series(time_series + noise)

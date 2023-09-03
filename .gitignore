@@ -165,4 +165,4 @@ cython_debug/
 .vscode/
 
 # Unnecessary legacy code used only for reference
-SWE principles/time_series_simulator.py
+SWE principles/timeseries_simulator.py
