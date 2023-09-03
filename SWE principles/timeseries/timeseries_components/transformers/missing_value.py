@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-class MissingValueComponent(Transformer):
+class MissingValueTransformer(Transformer):
     def __init__(self, missing_values_ratio: float) -> None:
         super().__init__()
         self.missing_values_ratio = missing_values_ratio

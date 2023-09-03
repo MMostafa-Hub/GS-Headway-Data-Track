@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 
-class OutlierComponent(Transformer):
+class OutlierTransformer(Transformer):
     def __init__(self, outlier_ratio: float) -> None:
         self.outlier_ratio = outlier_ratio
 

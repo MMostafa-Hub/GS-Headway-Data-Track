@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 
-class NoiseComponent(Transformer):
+class NoiseTransformer(Transformer):
     def __init__(self, noise_level: float) -> None:
         super().__init__()
         self.noise_level = noise_level
