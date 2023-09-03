@@ -7,34 +7,39 @@
 # Time index parameters
 # 1 Year of timeseries data with 1 minute sampling frequency
 time_index: {
-  start_date: 2019-01-01,
-  end_date: 2020-01-01,
-  sampling_frequency_in_minutes: 30 # 1 minute
+  start_date: "2019-01-01",
+  end_date: "2023-01-01",
+  sampling_frequency_in_minutes: 60 # 1 hour
 }
 
 # Main components parameters
 multiplicative: False,
 main_components: {
   trend: {
-    coefficients: [0.5, 0.1] ,
+    coefficients: [0.05, 0.001] ,
   },
   # You can add more than one seasonality component
   seasonality: [
     {
       in_days: False,
-      period: 30, # Monthly
-      amplitude: 5
+      period: 24, # Daily
+      amplitude: 0.5
     },
+    {
+      in_days: True,
+      period: 365, # Yearly
+      amplitude: 0.005
+    }
   ] ,
 }
 
 # Residual components parameters
 residual_components: {
   noise: {
-    noise_level: 0.001
+    noise_level: 0.01
   },
   outliers: {
-    outlier_ratio: 0.0001
+    outlier_ratio: 0.001
   },
 }
 
