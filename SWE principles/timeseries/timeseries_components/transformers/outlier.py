@@ -7,10 +7,6 @@ class OutlierTransformer(Transformer):
     def __init__(self, outlier_ratio: float) -> None:
         self.outlier_ratio = outlier_ratio
 
-        # These attributes maybe used in the future
-        self.anomaly_mask: np.ndarray = np.array([])
-        self.outlier_indices: np.ndarray = np.array([])
-
     def transform(self, time_series: pd.Series) -> pd.Series:
         """Add outliers to the time series data."""
         # Calculate the number of outliers to add based on the outlier ratio
@@ -33,9 +29,5 @@ class OutlierTransformer(Transformer):
 
         # Add the outliers to the time series data
         data_with_outliers[outlier_indices] = outliers
-
-        # Create a boolean mask to indicate the positions of the added outliers
-        self.anomaly_mask = np.zeros(time_series.shape[0], dtype=bool)
-        self.anomaly_mask[outlier_indices] = True
 
         return data_with_outliers
