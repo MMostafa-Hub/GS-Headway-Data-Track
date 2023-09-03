@@ -17,5 +17,15 @@ def main():
     TimeSeriesProducer.csv("./timeseries.csv", time_series)
 
 
+def visualize_timeseries():
+    import matplotlib.pyplot as plt
+    import pandas as pd
+
+    time_series = pd.read_csv("./timeseries.csv")
+    time_series.plot()
+    plt.show()
+
+
 if __name__ == "__main__":
     main()
+    visualize_timeseries()
