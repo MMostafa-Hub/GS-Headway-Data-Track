@@ -11,15 +11,14 @@ from .timeseries_components.transformers.outlier import OutlierTransformer
 
 class ConfigurationManager:
     @staticmethod
-    def __params(config: dict[str, Any]) -> TimeSeriesParams:
+    def _params(config: dict[str, Any]) -> TimeSeriesParams:
         """Unpacks the configuration dictionary and returns the time series parameters."""
         # Time index parameters
         time_index_config = config["time_index"]
         start_date = pd.Timestamp(time_index_config["start_date"])
         end_date = pd.Timestamp(time_index_config["end_date"])
-        frequency = (
-            f'{time_index_config["sampling_frequency_in_minutes"]}' + "T"
-        )  # T stands for minutes
+        # T stands for minutes
+        frequency = f'{time_index_config["sampling_frequency_in_minutes"]}' + "T"
 
         time_index = pd.date_range(start=start_date, end=end_date, freq=frequency)
 
@@ -64,4 +63,4 @@ class ConfigurationManager:
             config_data = file.read()
 
         config = yaml.load(config_data, Loader=yaml.FullLoader)
-        return ConfigurationManager.__params(config)
+        return ConfigurationManager._params(config)
