@@ -1,6 +1,6 @@
 # Time Series Simulator
 
- is a simple and easy to use tool for generating time series data samples. It uses pandas and numpy to generate the samples. And it uses matplotlib for visualizing the data.
+ is a simple and easy-to-use tool for generating time series data samples. It uses pandas and numpy to generate the samples. And it uses matplotlib for visualizing the data.
 
 ## Features
 
@@ -8,7 +8,7 @@
 -   Save the data in various formats, e.g. `timeseries.csv` file.
 -   Visualize the generated sample.
 -   The ability to extend the program, by adding your custom functions or classes. (see the class diagram)
-## Installation
+#Seenstallation
 
 To use Time Series Simulator, you will need Python 3 and the following dependencies:
 
@@ -78,3 +78,16 @@ python timeseries_client.py
     <img src="https://github.com/MMostafa-Hub/Headway-GS-Data-Track-Tasks/blob/main/images/vis.JPG">
 </p>
   4. Once you're happy with the result you could just use the generated data sample in your next app.
+
+## Extensibility 
+- Check the UML class diagram in `timesereis_simulator.drawio`.
+- You can add a new `Transformer` or a `Generator` by just inhereting from the abstract classes
+- You can add a new type of data dump or configuration by just adding a new function with the new type.
+  ```python
+  ConfigurationManager.env(path: str) -> TimeSeriesParams:
+   ...
+  ```
+  ```python
+  TimeSeriesProducer.tsv(path: str) -> None:
+   ...
+  ```
