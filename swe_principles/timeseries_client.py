@@ -1,10 +1,15 @@
+import pandas as pd
+import matplotlib.pyplot as plt
 from timeseries.configuration_manager import ConfigurationManager
 from timeseries.timeseries_producer import TimeSeriesProducer
 from timeseries.timeseries_simulator import TimeSeriesSimulator
 import sys
 
+time_series: pd.Series = None
+
 
 def main():
+    global time_series
     cl_args = sys.argv[1:]  # Getting the command line arguments
     config_path = cl_args[0]  # Getting the path to the configuration file
     dump_path = cl_args[1]  # Getting the path to the dump file
@@ -29,10 +34,7 @@ def main():
 
 
 def visualize_timeseries():
-    import matplotlib.pyplot as plt
-    import pandas as pd
-
-    time_series = pd.read_csv("./timeseries.csv")
+    global time_series
     time_series.plot()
     plt.show()
 
