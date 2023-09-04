@@ -1,3 +1,5 @@
+from typing import Any
+
 import pandas as pd
 import yaml
 from .timeseries_simulator import TimeSeriesParams
@@ -9,7 +11,7 @@ from .timeseries_components.transformers.outlier import OutlierTransformer
 
 class ConfigurationManager:
     @staticmethod
-    def __params(config: dict) -> TimeSeriesParams:
+    def __params(config: dict[str, Any]) -> TimeSeriesParams:
         """Unpacks the configuration dictionary and returns the time series parameters."""
         # Time index parameters
         time_index_config = config["time_index"]
