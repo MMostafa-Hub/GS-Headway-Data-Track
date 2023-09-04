@@ -1,14 +1,14 @@
 # Time Series Simulator
 
- is a simple and easy-to-use tool for generating time series data samples. It uses pandas and numpy to generate the samples. And it uses matplotlib for visualizing the data.
+Is a simple and easy-to-use tool for generating time series data samples. It uses pandas and numpy to generate the samples. And it uses matplotlib for visualizing the data.
 
 ## Features
 
--   Can specify the attributes through a configuration file, e.g. `config.yaml` file.
+-   Can specify the attributes through a configuration file (in any extensions), e.g. `config.yaml` file.
 -   Save the data in various formats, e.g. `timeseries.csv` file.
 -   Visualize the generated sample.
--   The ability to extend the program, by adding your custom functions or classes. (see the class diagram)
-#Seenstallation
+-   The ability to extend the program, by only *adding* your custom functions or classes. (See the class diagram)
+## Installation
 
 To use Time Series Simulator, you will need Python 3 and the following dependencies:
 
@@ -21,11 +21,11 @@ You can install these using pip:
 ```
 pip install pandas matplotlib numpy pyyaml
 ```
-
+If you need to add another file extension you should install the related Python package
 ## Usage
 
-1.  Input desired configurations in the `config.yaml` file.
-2.  Open a terminal in the project directory and run `timesereis_client.py`
+1.  Create a configuration file e.g. `config.yaml` (Check the example below to see the structure)
+2.  Open a terminal in the project directory and run `timesereis_client.py` by specifying the paths for the configuration file and data dump
 
 ## Example
 1. Modify `config.yaml` for the desired time series sample
@@ -71,13 +71,10 @@ residual_components: {
 ```
 2. run `timeseries_client.py` in terminal
 ```bash
-python timeseries_client.py
+python timeseries_client.py confi.yaml timeseries.csv
 ```
-3. Check the resulting visualization.
-<p align="center">
-    <img src="https://github.com/MMostafa-Hub/Headway-GS-Data-Track-Tasks/blob/main/images/vis.JPG">
-</p>
-  4. Once you're happy with the result you could just use the generated data sample in your next app.
+3. Check the resulting data.
+4. Once you're happy with the result you could just use the generated data sample in your next app.
 
 ## Extensibility 
 - Check the UML class diagram in `timesereis_simulator.drawio`.
