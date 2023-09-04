@@ -81,10 +81,12 @@ python timeseries_client.py confi.yaml timeseries.csv
 - You can add a new `Transformer` or a `Generator` by just inheriting from the abstract classes
 - You can add a new type of data dump or configuration by just adding a new function with the new type.
   ```python
-  ConfigurationManager.env(path: str) -> TimeSeriesParams:
-   ...
+  class ConfigurationManager:
+    def env(path: str) -> TimeSeriesParams:
+     ...
   ```
   ```python
-  TimeSeriesProducer.tsv(path: str) -> None:
-   ...
+  class TimeSeriesProducer:
+    def tsv(path: str) -> None:
+     ...
   ```
