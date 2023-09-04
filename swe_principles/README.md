@@ -81,7 +81,7 @@ python timeseries_client.py
 
 ## Extensibility 
 - Check the UML class diagram in `timesereis_simulator.drawio`.
-- You can add a new `Transformer` or a `Generator` by just inhereting from the abstract classes
+- You can add a new `Transformer` or a `Generator` by just inheriting from the abstract classes
 - You can add a new type of data dump or configuration by just adding a new function with the new type.
   ```python
   ConfigurationManager.env(path: str) -> TimeSeriesParams:
