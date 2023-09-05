@@ -74,6 +74,9 @@ residual_components: {
 python timeseries_client.py confi.yaml timeseries.csv
 ```
 3. Check the resulting data.
+<p align="center">
+    <img src="https://github.com/MMostafa-Hub/Headway-GS-Data-Track-Tasks/blob/main/images/vis.JPG">
+</p>  
 4. Once you're happy with the result you could just use the generated data sample in your next app.
 
 ## Extensibility 
