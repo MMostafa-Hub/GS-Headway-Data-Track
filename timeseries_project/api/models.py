@@ -42,3 +42,19 @@ class Configuration(models.Model):
     # Creating a one-to-many relationship between UseCase and Configuration
     # as a use case can have many configurations
     use_case = models.ForeignKey(UseCase, on_delete=models.CASCADE)
+
+
+class SeasonalComponent(models.Model):
+    frequency = models.FloatField(default=0)
+    amplitude = models.FloatField(default=0)
+    phase_shift = models.FloatField(default=0)
+    frequency_types = [
+        ("Daily", "daily"),
+        ("Weekly", "weekly"),
+        ("Monthly", "monthly"),
+    ]
+    frequency_type = models.CharField(choices=frequency_types)
+
+    # Creating a one-to-many relationship between Configuration and SeasonalComponent
+    # as a configuration can have many seasonal components
+    configuration = models.ForeignKey(Configuration, on_delete=models.CASCADE)
