@@ -3,33 +3,35 @@ from django_mysql.models import ListTextField
 
 
 class UseCase(models.Model):
-    name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
-    start_date = models.DateTimeField()
+    name = models.CharField(max_length=100)
+    start_date = models.DateTimeField(name="start_date")
 
     # At least one of the following two fields must be filled
     # If the two are filled, then the end_date is used
-    end_date = models.DateTimeField()
-    data_size = models.IntegerField()
+    end_date = models.DateTimeField(name="end_date", null=True, blank=True)
+    data_size = models.IntegerField(name="data_size", null=True, blank=True)
 
     producer_types = [
         ("Additive", "additive"),
         ("Multiplicative", "multiplicative"),
     ]
-    producer_type = models.CharField(choices=producer_types)
+    type = models.CharField(choices=producer_types, name="type")
 
 
-class Configuration(models.Model):
+class Dataset(models.Model):
     # This is the frequency of the time index used in pandas
-    cycle_component_freq = models.CharField(max_length=5)
-    cycle_component_amplitude = models.FloatField()
+    frequency = models.CharField(max_length=5, name="frequency")
 
+    noise_level = models.FloatField(name="noise_level")
     trend_coefficients = ListTextField(
-        base_field=models.FloatField(), size=10, default=[0]
+        base_field=models.FloatField(), size=10, default=[0], name="trend_coefficients"
     )
-    noise_level = models.FloatField()
-    outlier_percentage = models.FloatField(default=0)
-    missing_percentage = models.FloatField(default=0)
+    missing_percentage = models.FloatField(default=0, name="missing_percentage")
+    outlier_percentage = models.FloatField(default=0, name="outlier_percentage")
+
+    cycle_component_freq = models.IntegerField(name="cycle_frequency")
+    cycle_component_amplitude = models.FloatField(name="cycle_amplitude")
 
     status_choices = [
         ("Submitted", "Submitted"),
@@ -44,17 +46,17 @@ class Configuration(models.Model):
     use_case = models.ForeignKey(UseCase, on_delete=models.CASCADE)
 
 
-class SeasonalComponent(models.Model):
-    frequency = models.FloatField(default=0)
-    amplitude = models.FloatField(default=0)
-    phase_shift = models.FloatField(default=0)
+class SeasonalityComponent(models.Model):
+    amplitude = models.FloatField(default=0, name="amplitude")
+    phase_shift = models.FloatField(default=0, name="phase_shift")
     frequency_types = [
         ("Daily", "daily"),
         ("Weekly", "weekly"),
         ("Monthly", "monthly"),
     ]
-    frequency_type = models.CharField(choices=frequency_types)
+    frequency_type = models.CharField(choices=frequency_types, name="frequency")
+    frequency_multiplier = models.FloatField(default=0, name="multiplier")
 
-    # Creating a one-to-many relationship between Configuration and SeasonalComponent
+    # Creating a one-to-many relationship between Dataset and SeasonalityComponent
     # as a configuration can have many seasonal components
-    configuration = models.ForeignKey(Configuration, on_delete=models.CASCADE)
+    configuration = models.ForeignKey(Dataset, on_delete=models.CASCADE)
