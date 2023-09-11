@@ -43,7 +43,9 @@ class Dataset(models.Model):
 
     # Creating a one-to-many relationship between UseCase and Configuration
     # as a use case can have many configurations
-    use_case = models.ForeignKey(UseCase, on_delete=models.CASCADE)
+    use_case = models.ForeignKey(
+        UseCase, related_name="datasets", on_delete=models.CASCADE
+    )
 
 
 class SeasonalityComponent(models.Model):
@@ -58,5 +60,7 @@ class SeasonalityComponent(models.Model):
     frequency_multiplier = models.FloatField(default=0, name="multiplier")
 
     # Creating a one-to-many relationship between Dataset and SeasonalityComponent
-    # as a configuration can have many seasonal components
-    configuration = models.ForeignKey(Dataset, on_delete=models.CASCADE)
+    # as a dataset can have many seasonal components
+    dataset = models.ForeignKey(
+        Dataset, related_name="seasonality_components", on_delete=models.CASCADE
+    )
