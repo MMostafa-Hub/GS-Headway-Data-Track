@@ -13,10 +13,10 @@ class UseCase(models.Model):
     data_size = models.IntegerField(name="data_size", null=True, blank=True)
 
     producer_types = [
-        ("Additive", "additive"),
-        ("Multiplicative", "multiplicative"),
+        ("additive", "additive"),
+        ("multiplicative", "multiplicative"),
     ]
-    type = models.CharField(choices=producer_types, name="type")
+    type = models.CharField(max_length=15, choices=producer_types, name="type")
 
 
 class Dataset(models.Model):
@@ -24,9 +24,7 @@ class Dataset(models.Model):
     frequency = models.CharField(max_length=5, name="frequency")
 
     noise_level = models.FloatField(name="noise_level")
-    trend_coefficients = ListTextField(
-        base_field=models.FloatField(), size=10, default=[0], name="trend_coefficients"
-    )
+    trend_coefficients = models.JSONField(name="trend_coefficients", default=list)
     missing_percentage = models.FloatField(default=0, name="missing_percentage")
     outlier_percentage = models.FloatField(default=0, name="outlier_percentage")
 
@@ -44,7 +42,9 @@ class Dataset(models.Model):
     # Creating a one-to-many relationship between UseCase and Configuration
     # as a use case can have many configurations
     use_case = models.ForeignKey(
-        UseCase, related_name="datasets", on_delete=models.CASCADE
+        UseCase,
+        related_name="datasets",
+        on_delete=models.CASCADE,
     )
 
 
@@ -56,11 +56,15 @@ class SeasonalityComponent(models.Model):
         ("Weekly", "weekly"),
         ("Monthly", "monthly"),
     ]
-    frequency_type = models.CharField(choices=frequency_types, name="frequency")
+    frequency_type = models.CharField(
+        max_length=10, choices=frequency_types, name="frequency"
+    )
     frequency_multiplier = models.FloatField(default=0, name="multiplier")
 
     # Creating a one-to-many relationship between Dataset and SeasonalityComponent
     # as a dataset can have many seasonal components
     dataset = models.ForeignKey(
-        Dataset, related_name="seasonality_components", on_delete=models.CASCADE
+        Dataset,
+        related_name="seasonality_components",
+        on_delete=models.CASCADE,
     )

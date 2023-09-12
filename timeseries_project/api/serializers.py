@@ -8,6 +8,7 @@ class SeasonalityComponentSerializer(serializers.ModelSerializer):
         fields = ["frequency", "multiplier", "phase_shift", "amplitude"]
 
 
+#
 class DatasetSerializer(serializers.ModelSerializer):
     seasonality_components = SeasonalityComponentSerializer(
         many=True
@@ -26,45 +27,46 @@ class DatasetSerializer(serializers.ModelSerializer):
             "seasonality_components",
         ]
 
-    def create(self, validated_data):
-        """Creates a dataset and its seasonality components."""
-        seasonality_components_data = validated_data.pop(
-            "seasonality_components"
-        )  # Remove the seasonality components data from the validated data
-
-        dataset = Dataset.objects.create(**validated_data)  # Create the dataset
-        # Create the seasonality components
-        for seasonality_component_data in seasonality_components_data:
-            SeasonalityComponent.objects.create(
-                dataset=dataset, **seasonality_component_data
-            )
-        return dataset
-
 
 class UseCaseSerializer(serializers.ModelSerializer):
     datasets = DatasetSerializer(many=True)  # UseCase has many datasets
 
     class Meta:
         model = UseCase
-        fields = ["name", "start_date", "end_date", "type", "datasets"]
+        fields = ["name", "start_date", "end_date", "data_size", "type", "datasets"]
 
     def validate(self, attrs):
         """Checks that either the end date or the data size is provided, but not both."""
-        if not (bool(attrs["end_date"]) ^ bool(attrs["data_size"])):
+        if not (
+            bool(attrs.get("end_date", False)) ^ bool(attrs.get("data_size", False))
+        ):
             raise serializers.ValidationError(
                 "Either the end date or the data size must be provided, but not both."
             )
         return attrs
 
     def create(self, validated_data):
-        """Creates a user context and its datasets."""
+        """Creates a user case and its associated datasets and seasonality components."""
         datasets_data = validated_data.pop(
             "datasets"
         )  # Remove the datasets data from the validated data
 
         use_case = UseCase.objects.create(**validated_data)  # Create the use case
 
-        # Create the datasets
+        # Create the datasets and associate them with the use_case
         for dataset_data in datasets_data:
-            Dataset.objects.create(use_case=use_case, **dataset_data)
+            seasonality_components_data = dataset_data.pop(
+                "seasonality_components"
+            )  # Remove the seasonality components data from the dataset
+
+            # Create the dataset and associate it with the use_case
+            dataset = Dataset.objects.create(**dataset_data, use_case=use_case)
+
+            # Create the seasonality components and associate them with the dataset
+            for seasonality_component_data in seasonality_components_data:
+                seasonality_component = SeasonalityComponent.objects.create(
+                    **seasonality_component_data,
+                    dataset=dataset  # Associate the seasonality component with the dataset
+                )
+
         return use_case
