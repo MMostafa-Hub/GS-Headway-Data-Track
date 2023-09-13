@@ -18,6 +18,18 @@ class UseCase(models.Model):
     ]
     type = models.CharField(max_length=15, choices=producer_types, name="type")
 
+    status_choices = [
+        ("Submitted", "Submitted"),
+        ("Running", "Running"),
+        ("Succeeded", "Succeeded"),
+        ("Failed", "Failed"),
+    ]
+    status = models.CharField(
+        max_length=100, choices=status_choices, default="Submitted"
+    )
+
+    flag = models.BooleanField(default=False, name="flag")
+
 
 class Dataset(models.Model):
     id = models.AutoField(primary_key=True)
@@ -31,16 +43,6 @@ class Dataset(models.Model):
 
     cycle_component_freq = models.IntegerField(name="cycle_frequency")
     cycle_component_amplitude = models.FloatField(name="cycle_amplitude")
-
-    status_choices = [
-        ("Submitted", "Submitted"),
-        ("Running", "Running"),
-        ("Succeeded", "Succeeded"),
-        ("Failed", "Failed"),
-    ]
-    status = models.CharField(
-        max_length=100, choices=status_choices, default="Submitted"
-    )
 
     # Creating a one-to-many relationship between UseCase and Configuration
     # as a use case can have many configurations

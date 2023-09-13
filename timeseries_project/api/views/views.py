@@ -1,4 +1,6 @@
 import threading
+import time
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
@@ -9,27 +11,32 @@ from .timeseries_simulator.timeseries.configuration_manager import Configuration
 from .timeseries_simulator.timeseries.timeseries_producer import TimeSeriesProducer
 from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimulator
 
-# This dictionary is used to stop the simulator thread
-SIMULATOR_THREAD_STOP_FLAG = {}
-
 
 def run_simulator(request, serializer):
     """Runs the simulator and saves the results to the database."""
     dataset_ids = UseCase.objects.get(name=request.data["name"]).datasets.values_list(
         "id", flat=True
     )  # Get the dataset IDs associated with the use case
+    use_case = UseCase.objects.get(name=request.data["name"])  # Get the use case
 
     # Get the time series parameters from the database
     time_series_param_list = ConfigurationManager.sqlite_db(serializer)
     for time_series_params, dataset_id in zip(time_series_param_list, dataset_ids):
         time_series_simulator = TimeSeriesSimulator(time_series_params)
         result_time_series = time_series_simulator.simulate()
+
         # Check if the simulator thread should be stopped
-        if SIMULATOR_THREAD_STOP_FLAG[request.data["name"]]:
+        use_case = UseCase.objects.get(name=request.data["name"])  # Get the use case
+        if use_case.flag:
             return
 
         # Save the time series to the database
         TimeSeriesProducer.to_django_model(Dataset, dataset_id, result_time_series)
+
+    print("Finished running the simulator thread")
+    use_case.status = "Succeeded"
+    use_case.flag = False
+    use_case.save()
 
 
 @api_view(["POST"])
@@ -46,9 +53,6 @@ def add_use_case(request: Request) -> Response:
         target=run_simulator, args=(request, serializer)
     )
 
-    # Create a stop flag for the simulator thread
-    SIMULATOR_THREAD_STOP_FLAG[request.data["name"]] = False
-
     # Update the status of the use case to "Running"
     use_case = UseCase.objects.get(name=request.data["name"])
     use_case.status = "Running"
@@ -56,10 +60,6 @@ def add_use_case(request: Request) -> Response:
 
     # Start the simulator thread
     simulator_thread.start()
-
-    # Update the status of the use case to "Succeeded"
-    use_case.status = "Succeeded"
-    use_case.save()
 
     return Response(status=status.HTTP_201_CREATED)
 
@@ -83,10 +83,12 @@ def restart_simulator(request: Request) -> Response:
     simulator_thread = threading.Thread(
         target=run_simulator, args=(request, serializer)
     )
+    use_case.flag = False  # Set the stop flag to False
+    use_case.save()
+
+    # Start the simulator thread
     simulator_thread.start()
 
-    # Create a stop flag for the simulator thread
-    SIMULATOR_THREAD_STOP_FLAG[request.data["name"]] = False
     return Response(status=status.HTTP_200_OK)
 
 
@@ -96,7 +98,14 @@ def stop_simulator(request: Request) -> Response:
     request_data_simulator_name = request.data["name"]
     use_case = UseCase.objects.get(name=request_data_simulator_name)
     use_case.status = "Failed"
-
-    # Stop the simulator thread
-    SIMULATOR_THREAD_STOP_FLAG[request_data_simulator_name] = True
+    use_case.flag = True
+    use_case.save()
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def check_status(request: Request) -> Response:
+    """Checks the status of the simulator."""
+    request_data_simulator_name = request.data["name"]
+    use_case = UseCase.objects.get(name=request_data_simulator_name)
+    return Response(data=use_case.status, status=status.HTTP_200_OK)
