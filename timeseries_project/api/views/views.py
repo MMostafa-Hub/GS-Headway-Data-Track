@@ -1,5 +1,4 @@
 import threading
-
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
@@ -10,18 +9,27 @@ from .timeseries_simulator.timeseries.configuration_manager import Configuration
 from .timeseries_simulator.timeseries.timeseries_producer import TimeSeriesProducer
 from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimulator
 
-
-SIMULATOR_THREADS_ID = {}
+# This dictionary is used to stop the simulator thread
+SIMULATOR_THREAD_STOP_FLAG = {}
 
 
 def run_simulator(request, serializer):
+    """Runs the simulator and saves the results to the database."""
     dataset_ids = UseCase.objects.get(name=request.data["name"]).datasets.values_list(
         "id", flat=True
-    )
+    )  # Get the dataset IDs associated with the use case
+
+    # Get the time series parameters from the database
     time_series_param_list = ConfigurationManager.sqlite_db(serializer)
     for time_series_params, dataset_id in zip(time_series_param_list, dataset_ids):
         time_series_simulator = TimeSeriesSimulator(time_series_params)
         result_time_series = time_series_simulator.simulate()
+
+        # Check if the simulator thread should be stopped
+        if SIMULATOR_THREAD_STOP_FLAG[request.data["name"]]:
+            return
+
+        # Save the time series to the database
         TimeSeriesProducer.to_django_model(Dataset, dataset_id, result_time_series)
 
 
@@ -38,10 +46,26 @@ def add_use_case(request: Request) -> Response:
     simulator_thread = threading.Thread(
         target=run_simulator, args=(request, serializer)
     )
+
+    # Create a stop flag for the simulator thread
+    SIMULATOR_THREAD_STOP_FLAG[request.data["name"]] = False
+
+    # Update the status of the use case to "Running"
+    use_case = UseCase.objects.get(name=request.data["name"])
+    use_case.status = "Running"
+    use_case.save()
+
+    # Start the simulator thread
     simulator_thread.start()
 
-    # Save the thread ID in the SIMULATOR_THREADS_ID dictionary
-    SIMULATOR_THREADS_ID[request.data["name"]] = simulator_thread.ident
+    simulator_thread.join()  # Wait for the simulator thread to finish
+
+    # Update the status of the use case to "Succeeded"
+    use_case.status = "Succeeded"
+    use_case.save()
+
+    # Update the stop flag of the simulator thread
+    SIMULATOR_THREAD_STOP_FLAG[request.data["name"]] = True
 
     return Response(status=status.HTTP_201_CREATED)
 
@@ -55,6 +79,7 @@ def list_simulators(request: Request) -> Response:
 
 @api_view(["POST"])
 def restart_simulator(request: Request) -> Response:
+    """Restarts the simulator thread, by starting a new thread and setting the stop flag to False."""
     request_data_simulator_name = request.data["name"]
     use_case = UseCase.objects.get(name=request_data_simulator_name)
     use_case.status = "Running"
@@ -63,26 +88,20 @@ def restart_simulator(request: Request) -> Response:
     simulator_thread = threading.Thread(target=run_simulator, args=(request, use_case))
     simulator_thread.start()
 
-    # Save the thread ID in the SIMULATOR_THREADS_ID dictionary
-    SIMULATOR_THREADS_ID[request_data_simulator_name] = simulator_thread.ident
+    # Create a stop flag for the simulator thread
+    SIMULATOR_THREAD_STOP_FLAG[request.data["name"]] = False
 
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
 def stop_simulator(request: Request) -> Response:
+    """Stops the simulator thread, by setting the stop flag to True."""
     request_data_simulator_name = request.data["name"]
     use_case = UseCase.objects.get(name=request_data_simulator_name)
     use_case.status = "Failed"
 
-    # Get the thread ID from the SIMULATOR_THREADS_ID dictionary
-    thread_id = SIMULATOR_THREADS_ID.get(request_data_simulator_name)
-
-    if thread_id:
-        # Use the thread ID to stop the simulator
-        for thread in threading.enumerate():
-            if thread.ident == thread_id:
-                thread.join(timeout=1)
-                break
+    # Stop the simulator thread
+    SIMULATOR_THREAD_STOP_FLAG[request_data_simulator_name] = True
 
     return Response(status=status.HTTP_200_OK)
