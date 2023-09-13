@@ -3,8 +3,8 @@ from django_mysql.models import ListTextField
 
 
 class UseCase(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    name = models.CharField(max_length=100)
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True)
     start_date = models.DateTimeField(name="start_date")
 
     # At least one of the following two fields must be filled
@@ -20,6 +20,7 @@ class UseCase(models.Model):
 
 
 class Dataset(models.Model):
+    id = models.AutoField(primary_key=True)
     # This is the frequency of the time index used in pandas
     frequency = models.CharField(max_length=5, name="frequency")
 
@@ -37,7 +38,9 @@ class Dataset(models.Model):
         ("Succeeded", "Succeeded"),
         ("Failed", "Failed"),
     ]
-    status = models.CharField(max_length=100, choices=status_choices)
+    status = models.CharField(
+        max_length=100, choices=status_choices, default="Submitted"
+    )
 
     # Creating a one-to-many relationship between UseCase and Configuration
     # as a use case can have many configurations
@@ -47,8 +50,11 @@ class Dataset(models.Model):
         on_delete=models.CASCADE,
     )
 
+    time_series = models.JSONField(name="time_series", default=list)
+
 
 class SeasonalityComponent(models.Model):
+    id = models.AutoField(primary_key=True)
     amplitude = models.FloatField(default=0, name="amplitude")
     phase_shift = models.FloatField(default=0, name="phase_shift")
     frequency_types = [
