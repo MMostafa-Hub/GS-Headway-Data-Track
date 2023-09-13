@@ -24,7 +24,6 @@ def run_simulator(request, serializer):
     for time_series_params, dataset_id in zip(time_series_param_list, dataset_ids):
         time_series_simulator = TimeSeriesSimulator(time_series_params)
         result_time_series = time_series_simulator.simulate()
-
         # Check if the simulator thread should be stopped
         if SIMULATOR_THREAD_STOP_FLAG[request.data["name"]]:
             return
@@ -58,14 +57,9 @@ def add_use_case(request: Request) -> Response:
     # Start the simulator thread
     simulator_thread.start()
 
-    simulator_thread.join()  # Wait for the simulator thread to finish
-
     # Update the status of the use case to "Succeeded"
     use_case.status = "Succeeded"
     use_case.save()
-
-    # Update the stop flag of the simulator thread
-    SIMULATOR_THREAD_STOP_FLAG[request.data["name"]] = True
 
     return Response(status=status.HTTP_201_CREATED)
 
@@ -84,13 +78,15 @@ def restart_simulator(request: Request) -> Response:
     use_case = UseCase.objects.get(name=request_data_simulator_name)
     use_case.status = "Running"
 
+    serializer = UseCaseSerializer(use_case)
     # Start a new thread for the simulator
-    simulator_thread = threading.Thread(target=run_simulator, args=(request, use_case))
+    simulator_thread = threading.Thread(
+        target=run_simulator, args=(request, serializer)
+    )
     simulator_thread.start()
 
     # Create a stop flag for the simulator thread
     SIMULATOR_THREAD_STOP_FLAG[request.data["name"]] = False
-
     return Response(status=status.HTTP_200_OK)
 
 
@@ -103,5 +99,4 @@ def stop_simulator(request: Request) -> Response:
 
     # Stop the simulator thread
     SIMULATOR_THREAD_STOP_FLAG[request_data_simulator_name] = True
-
     return Response(status=status.HTTP_200_OK)
