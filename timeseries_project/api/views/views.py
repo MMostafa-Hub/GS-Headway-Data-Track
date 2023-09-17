@@ -96,10 +96,26 @@ def restart_simulator(request: Request) -> Response:
 def stop_simulator(request: Request) -> Response:
     """Stops the simulator thread, by setting the stop flag to True."""
     request_data_simulator_name = request.data["name"]
-    use_case = UseCase.objects.get(name=request_data_simulator_name)
+
+    # Check if there's a simulator with this name
+    try:
+        use_case = UseCase.objects.get(name=request_data_simulator_name)
+    except:
+        return Response(
+            data="This simulator doesn't exist", status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Check if the simulator is running
+    if use_case.status != "Running":
+        return Response(
+            data="The simulator has finished", status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Stop the simulator
     use_case.status = "Failed"
     use_case.flag = True
     use_case.save()
+
     return Response(status=status.HTTP_200_OK)
 
 
@@ -107,5 +123,13 @@ def stop_simulator(request: Request) -> Response:
 def check_status(request: Request) -> Response:
     """Checks the status of the simulator."""
     request_data_simulator_name = request.data["name"]
-    use_case = UseCase.objects.get(name=request_data_simulator_name)
+
+    # Check if there's a simulator with this name
+    try:
+        use_case = UseCase.objects.get(name=request_data_simulator_name)
+    except:
+        return Response(
+            data="This simulator doesn't exist", status=status.HTTP_400_BAD_REQUEST
+        )
+
     return Response(data=use_case.status, status=status.HTTP_200_OK)
