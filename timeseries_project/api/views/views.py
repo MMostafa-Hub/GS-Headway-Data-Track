@@ -25,7 +25,7 @@ def run_simulator(request, serializer):
         time_series_simulator = TimeSeriesSimulator(time_series_params)
         result_time_series = time_series_simulator.simulate()
 
-        # Check if the simulator thread should be stopped
+        # Check the use case again to see if it has been stopped by stop_simulator view
         use_case = UseCase.objects.get(name=request.data["name"])  # Get the use case
         if use_case.flag:
             return
@@ -33,7 +33,6 @@ def run_simulator(request, serializer):
         # Save the time series to the database
         TimeSeriesProducer.to_django_model(Dataset, dataset_id, result_time_series)
 
-    print("Finished running the simulator thread")
     use_case.status = "Succeeded"
     use_case.flag = False
     use_case.save()
