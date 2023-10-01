@@ -4,17 +4,15 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.response import Response
-from timeseries_project.api.serializers import UseCaseSerializer
-from timeseries_project.api.models import UseCase, Dataset
-from timeseries_project.api.timeseries_simulator.timeseries.configuration_manager import (
-    ConfigurationManager,
+from .serializers import UseCaseSerializer
+from .models import UseCase, Dataset
+from .timeseries_simulator.timeseries.timeseries_configurator.configurator_manager import (
+    ConfiguratorManager,
 )
-from timeseries_project.api.timeseries_simulator.timeseries.timeseries_producer import (
-    TimeSeriesProducer,
+from .timeseries_simulator.timeseries.timeseries_producer.producer_creator import (
+    ProducerCreator,
 )
-from timeseries_project.api.timeseries_simulator.timeseries.timeseries_simulator import (
-    TimeSeriesSimulator,
-)
+from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimulator
 
 
 def run_simulator(request, serializer):
@@ -25,7 +23,11 @@ def run_simulator(request, serializer):
     use_case = UseCase.objects.get(name=request.data["name"])  # Get the use case
 
     # Get the time series parameters from the database
-    time_series_param_list = ConfigurationManager.sqlite_db(serializer)
+    time_series_param_list = (
+        ConfiguratorManager("django")
+        .create_configurator(serializer=serializer)
+        .configure()
+    )
     for time_series_params, dataset_id in zip(time_series_param_list, dataset_ids):
         time_series_simulator = TimeSeriesSimulator(time_series_params)
         result_time_series = time_series_simulator.simulate()
@@ -36,7 +38,9 @@ def run_simulator(request, serializer):
             return
 
         # Save the time series to the database
-        TimeSeriesProducer.to_django_model(Dataset, dataset_id, result_time_series)
+        ProducerCreator("django").create(identifier=dataset_id, model=Dataset).produce(
+            result_time_series
+        )
 
     use_case.status = "Succeeded"
     use_case.flag = False

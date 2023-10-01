@@ -2,7 +2,7 @@ from unittest import TestCase, mock
 
 import pandas as pd
 
-from ..timeseries.configuration_manager import ConfigurationManager
+from ..timeseries.timeseries_configurator import ConfigurationManager
 from ..timeseries.timeseries_simulator import TimeSeriesParams
 
 

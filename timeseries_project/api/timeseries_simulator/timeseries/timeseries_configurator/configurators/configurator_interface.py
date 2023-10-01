@@ -1,27 +1,40 @@
+from abc import ABC, abstractmethod
 from typing import Any, List
-
 import pandas as pd
-import yaml
-from rest_framework import serializers
+from api.timeseries_simulator.timeseries.timeseries_components.generators.seasonality import (
+    SeasonalityGenerator,
+)
+from api.timeseries_simulator.timeseries.timeseries_components.generators.trend import (
+    TrendGenerator,
+)
+from api.timeseries_simulator.timeseries.timeseries_components.transformers.noise import (
+    NoiseTransformer,
+)
+from api.timeseries_simulator.timeseries.timeseries_components.transformers.outlier import (
+    OutlierTransformer,
+)
+from api.timeseries_simulator.timeseries.timeseries_components.transformers.missing_value import (
+    MissingValueTransformer,
+)
+from api.timeseries_simulator.timeseries.timeseries_simulator import (
+    TimeSeriesParams,
+)
 
-from .timeseries_simulator import TimeSeriesParams
-from .timeseries_components.generators.seasonality import SeasonalityGenerator
-from .timeseries_components.generators.trend import TrendGenerator
-from .timeseries_components.transformers.noise import NoiseTransformer
-from .timeseries_components.transformers.outlier import OutlierTransformer
-from .timeseries_components.transformers.missing_value import MissingValueTransformer
 
+class ConfiguratorInterface(ABC):
+    @abstractmethod
+    def configure(self) -> TimeSeriesParams:
+        pass
 
-class ConfigurationManager:
     @staticmethod
-    def _params(use_case: dict[str, Any]) -> List[TimeSeriesParams]:
-        """Unpacks the use case and returns a list of time series parameters."""
-        start_date = pd.Timestamp(use_case["start_date"])
-        end_date = pd.Timestamp(use_case.get("end_date", None))
-        data_size = use_case.get("data_size", None)
-        multiplicative = use_case["type"] == "multiplicative"
+    def _params(config: dict[str, Any]) -> List[TimeSeriesParams]:
+        """Unpacks the config and returns a list of time series parameters."""
+        start_date = pd.Timestamp(config["start_date"])
+        end_date = pd.Timestamp(config.get("end_date", None))
+        data_size = config.get("data_size", None)
+        multiplicative = config["type"] == "multiplicative"
         time_series_param_list = []
-        for dataset in use_case["datasets"]:
+        for dataset in config["datasets"]:
             frequency = dataset["frequency"]
             # Creating the time index
             if data_size:
@@ -94,16 +107,3 @@ class ConfigurationManager:
             time_series_param_list.append(time_series_params)
 
         return time_series_param_list
-
-    @staticmethod
-    def yaml(path: str) -> List[TimeSeriesParams]:
-        with open(path, "r") as file:
-            config_data = file.read()
-
-        config = yaml.load(config_data, Loader=yaml.FullLoader)
-        return ConfigurationManager._params(config)
-
-    @staticmethod
-    def sqlite_db(serializer: serializers.ModelSerializer) -> List[TimeSeriesParams]:
-        use_case = serializer.data
-        return ConfigurationManager._params(use_case)

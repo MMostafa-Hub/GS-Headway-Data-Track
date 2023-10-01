@@ -1,10 +1,16 @@
 from django.urls import path
-import views
+from .views import (
+    add_use_case,
+    list_simulators,
+    restart_simulator,
+    stop_simulator,
+    check_status,
+)
 
 urlpatterns = [
-    path("use_case", views.add_use_case),
-    path("list_simulators", views.list_simulators),
-    path("restart_simulator", views.restart_simulator),
-    path("stop_simulator", views.stop_simulator),
-    path("check_status", views.check_status),
+    path("use_case", add_use_case),
+    path("list_simulators", list_simulators),
+    path("restart_simulator", restart_simulator),
+    path("stop_simulator", stop_simulator),
+    path("check_status", check_status),
 ]
