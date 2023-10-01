@@ -1,0 +1,5 @@
+djangorestframework
+pandas
+numpy
+django
+PyYAML
