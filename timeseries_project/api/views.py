@@ -1,15 +1,20 @@
 import threading
-import time
 
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.response import Response
-from ..serializers import UseCaseSerializer
-from ..models import UseCase, Dataset
-from .timeseries_simulator.timeseries.configuration_manager import ConfigurationManager
-from .timeseries_simulator.timeseries.timeseries_producer import TimeSeriesProducer
-from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimulator
+from timeseries_project.api.serializers import UseCaseSerializer
+from timeseries_project.api.models import UseCase, Dataset
+from timeseries_project.api.timeseries_simulator.timeseries.configuration_manager import (
+    ConfigurationManager,
+)
+from timeseries_project.api.timeseries_simulator.timeseries.timeseries_producer import (
+    TimeSeriesProducer,
+)
+from timeseries_project.api.timeseries_simulator.timeseries.timeseries_simulator import (
+    TimeSeriesSimulator,
+)
 
 
 def run_simulator(request, serializer):

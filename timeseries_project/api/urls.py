@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import views
+import views
 
 urlpatterns = [
     path("use_case", views.add_use_case),
