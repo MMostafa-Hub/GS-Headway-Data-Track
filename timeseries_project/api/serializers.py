@@ -8,7 +8,6 @@ class SeasonalityComponentSerializer(serializers.ModelSerializer):
         fields = ["frequency", "multiplier", "phase_shift", "amplitude"]
 
 
-#
 class DatasetSerializer(serializers.ModelSerializer):
     seasonality_components = SeasonalityComponentSerializer(
         many=True
@@ -37,6 +36,7 @@ class UseCaseSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """Checks that either the end date or the data size is provided, but not both."""
+        super().validate(attrs)
         if not (
             bool(attrs.get("end_date", False)) ^ bool(attrs.get("data_size", False))
         ):
