@@ -1,16 +1,18 @@
 from django.urls import path
 from .views import (
-    add_use_case,
-    list_simulators,
-    restart_simulator,
-    stop_simulator,
-    check_status,
+    AddView,
+    ListView,
+    RestartView,
+    StopView,
+    StateView,
+    StartView,
 )
 
 urlpatterns = [
-    path("use_case", add_use_case),
-    path("list_simulators", list_simulators),
-    path("restart_simulator", restart_simulator),
-    path("stop_simulator", stop_simulator),
-    path("check_status", check_status),
+    path("add", AddView.as_view()),
+    path("start", StartView.as_view()),
+    path("list", ListView.as_view()),
+    path("restart", RestartView.as_view()),
+    path("stop", StopView.as_view()),
+    path("state", StateView.as_view()),
 ]
