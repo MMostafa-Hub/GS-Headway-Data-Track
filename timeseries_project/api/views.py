@@ -74,9 +74,11 @@ def add_use_case(request: Request) -> Response:
 
 @api_view(["GET"])
 def list_simulators(request: Request) -> Response:
-    """Returns the names of the simulators that are available."""
-    use_cases_simulator_names = UseCase.objects.values_list("name", flat=True)
-    return Response(data=use_cases_simulator_names, status=status.HTTP_200_OK)
+    """Returns the values of the uscases"""
+    use_cases_simulator_values = UseCaseSerializer(
+        UseCase.objects.all(), many=True
+    ).data
+    return Response(data=use_cases_simulator_values, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
