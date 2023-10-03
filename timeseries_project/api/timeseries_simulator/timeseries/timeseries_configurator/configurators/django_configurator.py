@@ -12,4 +12,5 @@ class DjangoConfigurator(ConfiguratorInterface):
         self.serializer = serializer
 
     def configure(self) -> list[TimeSeriesParams]:
+        """Configures the simulator using the Django serializer."""
         return self._params(self.serializer.data)

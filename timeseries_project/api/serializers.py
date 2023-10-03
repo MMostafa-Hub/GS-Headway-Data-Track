@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UseCase, Dataset, SeasonalityComponent
+from .models import Simulator, Dataset, SeasonalityComponent
 
 
 class SeasonalityComponentSerializer(serializers.ModelSerializer):
@@ -27,11 +27,11 @@ class DatasetSerializer(serializers.ModelSerializer):
         ]
 
 
-class UseCaseSerializer(serializers.ModelSerializer):
+class SimulatorSerializer(serializers.ModelSerializer):
     datasets = DatasetSerializer(many=True)  # UseCase has many datasets
 
     class Meta:
-        model = UseCase
+        model = Simulator
         fields = ["name", "start_date", "end_date", "data_size", "type", "datasets"]
 
     def validate(self, attrs):
@@ -51,7 +51,7 @@ class UseCaseSerializer(serializers.ModelSerializer):
             "datasets"
         )  # Remove the datasets data from the validated data
 
-        use_case = UseCase.objects.create(**validated_data)  # Create the use case
+        use_case = Simulator.objects.create(**validated_data)  # Create the use case
 
         # Create the datasets and associate them with the use_case
         for dataset_data in datasets_data:

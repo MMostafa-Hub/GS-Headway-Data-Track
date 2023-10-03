@@ -1,8 +1,7 @@
 from django.db import models
 
 
-class UseCase(models.Model):
-    id = models.AutoField(primary_key=True)
+class Simulator(models.Model):
     name = models.CharField(max_length=100, unique=True)
     start_date = models.DateTimeField(name="start_date")
 
@@ -27,11 +26,10 @@ class UseCase(models.Model):
         max_length=100, choices=status_choices, default="Submitted"
     )
 
-    flag = models.BooleanField(default=False, name="flag")
+    stop_flag = models.BooleanField(default=False, name="stop_flag")
 
 
 class Dataset(models.Model):
-    id = models.AutoField(primary_key=True)
     # This is the frequency of the time index used in pandas
     frequency = models.CharField(max_length=5, name="frequency")
 
@@ -46,7 +44,7 @@ class Dataset(models.Model):
     # Creating a one-to-many relationship between UseCase and Configuration
     # as a use case can have many configurations
     use_case = models.ForeignKey(
-        UseCase,
+        Simulator,
         related_name="datasets",
         on_delete=models.CASCADE,
     )
@@ -55,7 +53,6 @@ class Dataset(models.Model):
 
 
 class SeasonalityComponent(models.Model):
-    id = models.AutoField(primary_key=True)
     amplitude = models.FloatField(default=0, name="amplitude")
     phase_shift = models.FloatField(default=0, name="phase_shift")
     frequency_types = [
