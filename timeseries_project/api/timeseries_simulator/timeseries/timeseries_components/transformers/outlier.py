@@ -8,7 +8,27 @@ class OutlierTransformer(Transformer):
         self.outlier_ratio = outlier_ratio
 
     def transform(self, time_series: pd.Series) -> pd.Series:
-        """Add outliers to the time series data."""
+        """
+        Add random outliers to the time series data.
+
+        Args:
+            time_series (pd.Series): The input time series data to which outliers will be added.
+
+        Returns:
+            pd.Series: A pandas Series representing the time series data with added random outliers.
+
+        This method introduces random outliers to the provided time series data by selecting a
+        specified percentage of data points and replacing them with random outlier values
+        within the range [-1, 1].
+
+        Args:
+        - time_series: The input time series data to which random outliers will be added.
+
+        Returns:
+        - pd.Series: A pandas Series containing the original time series data with random
+          outliers introduced.
+        """
+
         # Calculate the number of outliers to add based on the outlier ratio
         num_outliers = int(time_series.shape[0] * self.outlier_ratio)
 

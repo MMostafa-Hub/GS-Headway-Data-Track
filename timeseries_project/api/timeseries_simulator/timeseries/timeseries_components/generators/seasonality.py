@@ -28,7 +28,28 @@ class SeasonalityGenerator(Generator):
         self.multiplier = multiplier
 
     def generate(self, time_index: pd.DatetimeIndex) -> pd.Series:
-        """Generates a sinusoidal seasonality component for a time series."""
+        """
+        Generates a sinusoidal seasonality component for a time series.
+
+        Args:
+            time_index (pd.DatetimeIndex): A DatetimeIndex representing the time points
+                for which the seasonality component should be generated.
+
+        Returns:
+            pd.Series: A pandas Series representing the generated sinusoidal seasonality component.
+
+        The seasonality component is generated as a sinusoidal wave with customizable
+        amplitude, frequency (multiplier), and phase shift. It is calculated using the
+        formula:
+
+        amplitude * sin(2 * pi * time / total_period + phase_shift)
+
+        where:
+        - amplitude: The amplitude of the sinusoidal wave.
+        - time: A sequence of numbers representing the position in the time_index.
+        - total_period: The total number of time points in the seasonality cycle.
+        - phase_shift: The phase shift (in radians) applied to the sinusoidal wave.
+        """
         # sequence of numbers from 0 to the number of timestamps
         time = np.arange(len(time_index))
 

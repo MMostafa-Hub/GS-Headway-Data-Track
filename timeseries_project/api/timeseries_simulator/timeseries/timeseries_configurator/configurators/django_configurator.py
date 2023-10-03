@@ -9,8 +9,19 @@ from api.timeseries_simulator.timeseries.timeseries_simulator import (
 
 class DjangoConfigurator(ConfiguratorInterface):
     def __init__(self, serializer: serializers.ModelSerializer):
+        """
+        Initializes a DjangoConfigurator instance.
+
+        Args:
+            serializer (serializers.ModelSerializer): The Django serializer containing configuration data.
+        """
         self.serializer = serializer
 
     def configure(self) -> list[TimeSeriesParams]:
-        """Configures the simulator using the Django serializer."""
+        """
+        Configures the simulator using the Django serializer.
+
+        Returns:
+            list[TimeSeriesParams]: A list of TimeSeriesParams objects based on the configuration data.
+        """
         return self._params(self.serializer.data)

@@ -15,7 +15,15 @@ from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimu
 
 class AddView(APIView):
     def post(self, request):
-        """Adds a new simulator to the database"""
+        """
+        Adds a new simulator to the database.
+
+        Args:
+            request: The HTTP request object containing data for the new simulator.
+
+        Returns:
+            Response: HTTP response indicating success (201 Created) or failure (400 Bad Request).
+        """
         serializer = SimulatorSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -27,7 +35,15 @@ class AddView(APIView):
 
 class StartView(APIView):
     def post(self, request):
-        """Starts the simulator thread."""
+        """
+        Starts the simulator thread.
+
+        Args:
+            request: The HTTP request object containing the name of the simulator to start.
+
+        Returns:
+            Response: HTTP response indicating success (200 OK) or failure (400 Bad Request).
+        """
         try:
             simulator = Simulator.objects.get(name=request.data["name"])
             serializer = SimulatorSerializer(simulator)
@@ -53,7 +69,16 @@ class StartView(APIView):
 
     @staticmethod
     def run_simulator(request, serializer):
-        """Runs the simulator and saves the results to the database."""
+        """
+        Runs the simulator and saves the results to the database.
+
+        Args:
+            request: The HTTP request object containing the name of the simulator.
+            serializer: The serializer for the simulator.
+
+        Note:
+            This method is run in a separate thread.
+        """
         # Get the dataset IDs associated with the simulator
         dataset_ids = Simulator.objects.get(
             name=request.data["name"]
@@ -90,14 +115,27 @@ class StartView(APIView):
 
 class ListView(APIView):
     def get(self, request):
-        """Returns the values of the use cases"""
+        """
+        Returns the values of all the simulators in the database.
+
+        Returns:
+            Response: HTTP response containing simulator data (200 OK).
+        """
         simulator_values = SimulatorSerializer(Simulator.objects.all(), many=True).data
         return Response(data=simulator_values, status=status.HTTP_200_OK)
 
 
 class RestartView(APIView):
     def post(self, request):
-        """Restarts the simulator thread, by starting a new thread and setting the stop flag to False."""
+        """
+        Restarts the simulator thread, by starting a new thread and setting the stop flag to False.
+
+        Args:
+            request: The HTTP request object containing the name of the simulator to restart.
+
+        Returns:
+            Response: HTTP response indicating success (200 OK).
+        """
         simulator = Simulator.objects.get(name=request.data["name"])
         simulator.status = "Running"
 
@@ -119,7 +157,15 @@ class RestartView(APIView):
 
 class StopView(APIView):
     def post(self, request):
-        """Stops the simulator thread, by setting the stop flag to True."""
+        """
+        Stops the simulator thread, by setting the stop flag to True.
+
+        Args:
+            request: The HTTP request object containing the name of the simulator to stop.
+
+        Returns:
+            Response: HTTP response indicating success (200 OK) or failure (400 Bad Request).
+        """
         # Check if there's a simulator with this name
         try:
             simulator = Simulator.objects.get(name=request.data["name"])
@@ -144,7 +190,15 @@ class StopView(APIView):
 
 class StatusView(APIView):
     def get(self, request):
-        """Checks the status of the simulator."""
+        """
+        Checks the status of the simulator.
+
+        Args:
+            request: The HTTP request object containing the name of the simulator.
+
+        Returns:
+            Response: HTTP response containing the status of the simulator (200 OK).
+        """
         try:
             simulator = Simulator.objects.get(name=request.data["name"])
         except:

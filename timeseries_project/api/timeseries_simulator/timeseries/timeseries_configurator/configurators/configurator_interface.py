@@ -24,11 +24,19 @@ from api.timeseries_simulator.timeseries.timeseries_simulator import (
 class ConfiguratorInterface(ABC):
     @abstractmethod
     def configure(self) -> TimeSeriesParams:
+        """Abstract method for configuring a TimeSeriesParams object."""
         pass
 
     @staticmethod
     def _params(config: dict[str, Any]) -> List[TimeSeriesParams]:
-        """Unpacks the config and returns a list of time series parameters."""
+        """Unpacks the config and returns a list of time series parameters.
+
+        Args:
+            config (dict): A dictionary containing configuration parameters.
+
+        Returns:
+            List[TimeSeriesParams]: A list of TimeSeriesParams objects.
+        """
         start_date = pd.Timestamp(config["start_date"])
         end_date = pd.Timestamp(config.get("end_date", None))
         data_size = config.get("data_size", None)
