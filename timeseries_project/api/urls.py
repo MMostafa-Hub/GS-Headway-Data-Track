@@ -4,7 +4,7 @@ from .views import (
     ListView,
     RestartView,
     StopView,
-    StateView,
+    StatusView,
     StartView,
 )
 
@@ -14,5 +14,5 @@ urlpatterns = [
     path("list", ListView.as_view()),
     path("restart", RestartView.as_view()),
     path("stop", StopView.as_view()),
-    path("state", StateView.as_view()),
+    path("status", StatusView.as_view()),
 ]
