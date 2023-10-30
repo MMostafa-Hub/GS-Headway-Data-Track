@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  api-db:
+    image: postgres
+    container_name: api-db-container
+    environment:
+      - POSTGRES_USER=timeseries_user
+      - POSTGRES_PASSWORD=timeseries_password
+      - POSTGRES_DB=timeseries_db
+
+  api:
+    build: ./timeseries_project
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8001"
+    container_name: api-container
+    volumes:
+      - migrations:/timeseries_project/migrations
+    ports:
+      - 8001:8001
+    depends_on:
+      - api-db
+
+volumes:
+  migrations:
