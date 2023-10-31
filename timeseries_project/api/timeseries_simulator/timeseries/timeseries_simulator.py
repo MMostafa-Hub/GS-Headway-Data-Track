@@ -43,4 +43,7 @@ class TimeSeriesSimulator:
         for rc in self.residual_components:
             result_series = rc.transform(result_series)
 
+        # Add the timestamp index
+        result_series.index = self.time_index
+        
         return result_series
