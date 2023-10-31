@@ -107,8 +107,10 @@ class StartView(APIView):
                 return
 
             # Save the time series to the database
-            ProducerCreator("django").create(
-                identifier=dataset_id, model=Dataset
+            ProducerCreator("kafka").create(
+                topic="test_topic",
+                host="localhost",
+                port=9092,
             ).produce(result_time_series)
 
         simulator.status = "Succeeded"
