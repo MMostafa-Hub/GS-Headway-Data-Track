@@ -29,6 +29,7 @@ To run the api, you will need Python 3 and the dependencies in the `requirements
 ### 1. Creating a Use Case
 
 Create a GET request to `api/simulator` with a request body like this:
+
 ```JSON
 {
   "name": "simulator_1",
@@ -69,8 +70,10 @@ Create a GET request to `api/simulator` with a request body like this:
 ```
 
 ### 2. List all the use cases
+
 Create a GET request to `api/list_simulators` with no request body.
 The Response should look like this
+
 ```JSON
 [
   "simulator_1"
@@ -80,6 +83,7 @@ The Response should look like this
 ### 3. Stop the generation process
 
 Create a POST request to `api/stop_simulator` with a request body like this:
+
 ```JSON
 {
   "name": "simulator_1"
@@ -87,7 +91,9 @@ Create a POST request to `api/stop_simulator` with a request body like this:
 ```
 
 ### 4. Restart the generation process
+
 If the generation process fails, you can restart it by creating a POST request to `api/restart_simulator` with a request body like this:
+
 ```JSON
 {
   "name": "simulator_1"
@@ -95,7 +101,9 @@ If the generation process fails, you can restart it by creating a POST request t
 ```
 
 ### 5. Check the status of the request
+
 Create a GET request to `api/check_status` with a request body like this:
+
 ```JSON
 {
   "name": "simulator_1"
@@ -103,12 +111,14 @@ Create a GET request to `api/check_status` with a request body like this:
 ```
 
 And the response should look like this:
+
 ```JSON
   "Succeeded"
 ```
+
 The status of the request can be:
+
 - `Submitted`: The request has been submitted.
 - `Succeeded`: The generation process has finished successfully.
 - `Failed`: The generation process has failed or stopped.
 - `Running`: The generation process is still running.
-
