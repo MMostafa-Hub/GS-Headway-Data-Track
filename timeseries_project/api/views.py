@@ -108,11 +108,11 @@ class StartView(APIView):
 
             # Save the time series to the database
             ProducerCreator("kafka").create(
-                topic="test_topic",
+                topic=simulator.sink_name,
                 host="localhost",
                 port=9092,
             ).produce(result_time_series)
-
+        
         simulator.status = "Succeeded"
         simulator.stop_flag = False
         simulator.save()

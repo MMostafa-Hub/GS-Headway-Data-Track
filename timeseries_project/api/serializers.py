@@ -33,7 +33,7 @@ class SimulatorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Simulator
-        fields = ["name", "start_date", "end_date", "data_size", "type", "datasets"]
+        fields = ["name", "start_date", "end_date", "data_size", "type", "datasets", "sink_name"]
 
     @override
     def validate(self, attrs):

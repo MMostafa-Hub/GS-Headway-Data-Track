@@ -26,6 +26,8 @@ class Simulator(models.Model):
         max_length=100, choices=status_choices, default="Submitted"
     )
 
+    sink_name = models.CharField(max_length=100, name="sink_name", default="sink_topic")
+
     stop_flag = models.BooleanField(default=False, name="stop_flag")
 
 
