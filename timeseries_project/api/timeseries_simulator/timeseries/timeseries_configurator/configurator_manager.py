@@ -1,6 +1,7 @@
 from typing import Any
 from .configurators.django_configurator import DjangoConfigurator
 from .configurators.yaml_configurator import YamlConfigurator
+from .configurators.configurator_interface import ConfiguratorInterface
 
 
 class ConfiguratorManager:
@@ -13,7 +14,7 @@ class ConfiguratorManager:
         """
         self.input_type = input_type
 
-    def create_configurator(self, **kwargs) -> Any:
+    def create_configurator(self, **kwargs) -> ConfiguratorInterface:
         """
         Creates a configurator based on the input type and arguments.
 
