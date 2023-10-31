@@ -32,5 +32,9 @@ class ProducerCreator:
             from .producers.django_producer import DjangoModelProducer
 
             return DjangoModelProducer(**kwargs)
+        elif self.output_type == "kafka":
+            from .producers.kafka_producer import KafkaProducer
+
+            return KafkaProducer(**kwargs)
         else:
             raise Exception("Invalid output type.")
