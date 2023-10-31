@@ -78,7 +78,7 @@ WSGI_APPLICATION = "timeseries_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "timeseries_db",
+        "NAME": "timeseries_db.sqlite",
     }
 }
 
