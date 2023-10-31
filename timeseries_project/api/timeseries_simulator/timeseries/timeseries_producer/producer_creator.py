@@ -29,7 +29,7 @@ class ProducerCreator:
 
             return CsvProducer(**kwargs)
         elif self.output_type == "django":
-            from .producers.djangol_producer import DjangoModelProducer
+            from .producers.django_producer import DjangoModelProducer
 
             return DjangoModelProducer(**kwargs)
         else:
