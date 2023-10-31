@@ -67,7 +67,7 @@ class SimulatorSerializer(serializers.ModelSerializer):
 
             # Create the seasonality components and associate them with the dataset
             for seasonality_component_data in seasonality_components_data:
-                seasonality_component = SeasonalityComponent.objects.create(
+                SeasonalityComponent.objects.create(
                     **seasonality_component_data,
                     dataset=dataset  # Associate the seasonality component with the dataset
                 )
