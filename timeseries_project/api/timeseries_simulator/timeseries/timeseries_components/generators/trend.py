@@ -1,7 +1,7 @@
 from .generator import Generator
 import pandas as pd
 import numpy as np
-from typing import List
+from typing import List, override
 
 
 class TrendGenerator(Generator):
@@ -16,6 +16,7 @@ class TrendGenerator(Generator):
         super().__init__()
         self.coefficients = coefficients
 
+    @override
     def generate(self, time_index: pd.DatetimeIndex) -> pd.Series:
         """
         Generate the trend component for a time series.

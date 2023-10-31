@@ -1,3 +1,4 @@
+from typing import override
 from .generator import Generator
 import pandas as pd
 import numpy as np
@@ -9,6 +10,7 @@ class StaticSignalGenerator(Generator):
         super().__init__()
         self.magnitude = magnitude
 
+    @override
     def generate(self, time_index: pd.DatetimeIndex) -> pd.Series:
         """
         Generate a static signal component for a time series.

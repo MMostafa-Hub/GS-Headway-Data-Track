@@ -1,4 +1,4 @@
-from typing import List
+from typing import override
 
 from .configurator_interface import ConfiguratorInterface
 from rest_framework import serializers
@@ -17,6 +17,7 @@ class DjangoConfigurator(ConfiguratorInterface):
         """
         self.serializer = serializer
 
+    @override
     def configure(self) -> list[TimeSeriesParams]:
         """
         Configures the simulator using the Django serializer.

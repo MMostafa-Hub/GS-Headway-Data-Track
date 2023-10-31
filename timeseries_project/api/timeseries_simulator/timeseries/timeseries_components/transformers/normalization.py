@@ -2,7 +2,7 @@ from .transformer import Transformer
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from typing import Tuple
+from typing import Tuple, override
 
 
 class NormalizationTransformer(Transformer):
@@ -10,6 +10,7 @@ class NormalizationTransformer(Transformer):
         super().__init__()
         self.feature_range = feature_range
 
+    @override
     def transform(self, time_series: pd.Series) -> pd.Series:
         """
         Normalize the time series data to a specified feature range.

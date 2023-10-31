@@ -1,3 +1,4 @@
+from typing import override
 from .transformer import Transformer
 import pandas as pd
 import numpy as np
@@ -7,6 +8,7 @@ class OutlierTransformer(Transformer):
     def __init__(self, outlier_ratio: float) -> None:
         self.outlier_ratio = outlier_ratio
 
+    @override
     def transform(self, time_series: pd.Series) -> pd.Series:
         """
         Add random outliers to the time series data.

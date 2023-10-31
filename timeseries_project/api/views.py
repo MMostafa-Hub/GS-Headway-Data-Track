@@ -1,4 +1,5 @@
 import threading
+from typing import override
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,7 +15,8 @@ from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimu
 
 
 class AddView(APIView):
-    def post(self, request):
+    @override
+    def post(self, request) -> Response:
         """
         Adds a new simulator to the database.
 
@@ -34,7 +36,8 @@ class AddView(APIView):
 
 
 class StartView(APIView):
-    def post(self, request):
+    @override
+    def post(self, request) -> Response:
         """
         Starts the simulator thread.
 
@@ -47,7 +50,7 @@ class StartView(APIView):
         try:
             simulator = Simulator.objects.get(name=request.data["name"])
             serializer = SimulatorSerializer(simulator)
-        except Exception as e:
+        except Exception:
             return Response(
                 data="This simulator doesn't exist", status=status.HTTP_400_BAD_REQUEST
             )
@@ -114,7 +117,8 @@ class StartView(APIView):
 
 
 class ListView(APIView):
-    def get(self, request):
+    @override
+    def get(self, request) -> Response:
         """
         Returns the values of all the simulators in the database.
 
@@ -126,7 +130,8 @@ class ListView(APIView):
 
 
 class RestartView(APIView):
-    def post(self, request):
+    @override
+    def post(self, request) -> Response:
         """
         Restarts the simulator thread, by starting a new thread and setting the stop flag to False.
 
@@ -156,7 +161,8 @@ class RestartView(APIView):
 
 
 class StopView(APIView):
-    def post(self, request):
+    @override
+    def post(self, request) -> Response:
         """
         Stops the simulator thread, by setting the stop flag to True.
 
@@ -169,7 +175,7 @@ class StopView(APIView):
         # Check if there's a simulator with this name
         try:
             simulator = Simulator.objects.get(name=request.data["name"])
-        except:
+        except Exception:
             return Response(
                 data="This simulator doesn't exist", status=status.HTTP_400_BAD_REQUEST
             )
@@ -189,7 +195,8 @@ class StopView(APIView):
 
 
 class StatusView(APIView):
-    def get(self, request):
+    @override
+    def get(self, request) -> Response:
         """
         Checks the status of the simulator.
 
@@ -201,7 +208,7 @@ class StatusView(APIView):
         """
         try:
             simulator = Simulator.objects.get(name=request.data["name"])
-        except:
+        except Exception:
             return Response(
                 data="This simulator doesn't exist", status=status.HTTP_400_BAD_REQUEST
             )

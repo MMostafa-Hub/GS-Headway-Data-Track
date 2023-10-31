@@ -1,3 +1,4 @@
+from typing import override
 from rest_framework import serializers
 from .models import Simulator, Dataset, SeasonalityComponent
 
@@ -34,6 +35,7 @@ class SimulatorSerializer(serializers.ModelSerializer):
         model = Simulator
         fields = ["name", "start_date", "end_date", "data_size", "type", "datasets"]
 
+    @override
     def validate(self, attrs):
         """Checks that either the end date or the data size is provided, but not both."""
         super().validate(attrs)
@@ -45,6 +47,7 @@ class SimulatorSerializer(serializers.ModelSerializer):
             )
         return attrs
 
+    @override
     def create(self, validated_data):
         """Creates a user case and its associated datasets and seasonality components."""
         datasets_data = validated_data.pop(
