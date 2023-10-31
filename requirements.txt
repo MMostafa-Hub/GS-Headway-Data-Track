@@ -3,3 +3,4 @@ pandas
 numpy
 django
 PyYAML
+scikit-learn
