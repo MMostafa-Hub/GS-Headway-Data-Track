@@ -54,16 +54,16 @@ class SimulatorSerializer(serializers.ModelSerializer):
             "datasets"
         )  # Remove the datasets data from the validated data
 
-        use_case = Simulator.objects.create(**validated_data)  # Create the use case
+        simulator = Simulator.objects.create(**validated_data)  # Create the use case
 
-        # Create the datasets and associate them with the use_case
+        # Create the datasets and associate them with the simulator
         for dataset_data in datasets_data:
             seasonality_components_data = dataset_data.pop(
                 "seasonality_components"
             )  # Remove the seasonality components data from the dataset
 
-            # Create the dataset and associate it with the use_case
-            dataset = Dataset.objects.create(**dataset_data, use_case=use_case)
+            # Create the dataset and associate it with the simulator
+            dataset = Dataset.objects.create(**dataset_data, simulator=simulator)
 
             # Create the seasonality components and associate them with the dataset
             for seasonality_component_data in seasonality_components_data:
@@ -72,4 +72,4 @@ class SimulatorSerializer(serializers.ModelSerializer):
                     dataset=dataset  # Associate the seasonality component with the dataset
                 )
 
-        return use_case
+        return simulator

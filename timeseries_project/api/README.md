@@ -28,10 +28,10 @@ To run the api, you will need Python 3 and the dependencies in the `requirements
 
 ### 1. Creating a Use Case
 
-Create a GET request to `api/use_case` with a request body like this:
+Create a GET request to `api/simulator` with a request body like this:
 ```JSON
 {
-  "name": "use_case_1",
+  "name": "simulator_1",
   "start_date": "2021-01-01",
   "end_date": "2022-01-01",
   "type": "additive",
@@ -73,7 +73,7 @@ Create a GET request to `api/list_simulators` with no request body.
 The Response should look like this
 ```JSON
 [
-  "use_case_1"
+  "simulator_1"
 ]
 ```
 
@@ -82,7 +82,7 @@ The Response should look like this
 Create a POST request to `api/stop_simulator` with a request body like this:
 ```JSON
 {
-  "name": "use_case_1"
+  "name": "simulator_1"
 }
 ```
 
@@ -90,7 +90,7 @@ Create a POST request to `api/stop_simulator` with a request body like this:
 If the generation process fails, you can restart it by creating a POST request to `api/restart_simulator` with a request body like this:
 ```JSON
 {
-  "name": "use_case_1"
+  "name": "simulator_1"
 }
 ```
 
@@ -98,7 +98,7 @@ If the generation process fails, you can restart it by creating a POST request t
 Create a GET request to `api/check_status` with a request body like this:
 ```JSON
 {
-  "name": "use_case_1"
+  "name": "simulator_1"
 }
 ```
 

@@ -43,7 +43,7 @@ class Dataset(models.Model):
 
     # Creating a one-to-many relationship between UseCase and Configuration
     # as a use case can have many configurations
-    use_case = models.ForeignKey(
+    simulator = models.ForeignKey(
         Simulator,
         related_name="datasets",
         on_delete=models.CASCADE,
