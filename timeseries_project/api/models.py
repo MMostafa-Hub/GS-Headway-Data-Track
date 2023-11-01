@@ -28,7 +28,7 @@ class Simulator(models.Model):
 
     sink_name = models.CharField(max_length=100, name="sink_name", default="sink_topic")
 
-    stop_flag = models.BooleanField(default=False, name="stop_flag")
+    process_id = models.IntegerField(null=True, name="process_id")
 
 
 class Dataset(models.Model):

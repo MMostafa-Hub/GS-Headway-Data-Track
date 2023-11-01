@@ -1,4 +1,3 @@
-import threading
 from typing import override
 from rest_framework import status
 from rest_framework.views import APIView
@@ -12,6 +11,8 @@ from .timeseries_simulator.timeseries.timeseries_producer.producer_creator impor
     ProducerCreator,
 )
 from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimulator
+from multiprocessing import Process
+import psutil
 
 
 class AddView(APIView):
@@ -55,18 +56,19 @@ class StartView(APIView):
                 data="This simulator doesn't exist", status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Start a new thread to run the simulator, and associate it with the name of the simulator
-        simulator_thread = threading.Thread(
+        # Start a new process to run the simulator, and associate it with the name of the simulator
+        simulator_process = Process(
             target=StartView.run_simulator, args=(request, serializer)
         )
 
+        # Start the simulator process
+        simulator_process.start()
+
         # Update the status of the simulator to "Running"
         simulator = Simulator.objects.get(name=request.data["name"])
+        simulator.process_id = simulator_process.pid
         simulator.status = "Running"
         simulator.save()
-
-        # Start the simulator thread
-        simulator_thread.start()
 
         return Response(status=status.HTTP_200_OK)
 
@@ -101,9 +103,6 @@ class StartView(APIView):
             # Check the simulator again to see if it has been stopped by StopView
             simulator = Simulator.objects.get(name=request.data["name"])
 
-            if simulator.stop_flag:  # If the stop flag is True, stop the simulator
-                return
-
             # Send the time series to the sink
             ProducerCreator("kafka").create(
                 generator_name=dataset["generator_name"],
@@ -114,7 +113,6 @@ class StartView(APIView):
             ).produce(result_time_series)
 
         simulator.status = "Succeeded"
-        simulator.stop_flag = False
         simulator.save()
 
 
@@ -144,20 +142,26 @@ class RestartView(APIView):
             Response: HTTP response indicating success (200 OK).
         """
         simulator = Simulator.objects.get(name=request.data["name"])
+
+        # Update the status of the simulator to "Running"
         simulator.status = "Running"
 
+        # Get the serializer for the simulator
         serializer = SimulatorSerializer(simulator)
 
-        simulator.stop_flag = False  # Set the stop flag to False
-        simulator.save()
-
-        # Start a new thread for the simulator
-        simulator_thread = threading.Thread(
+        # Start a new process for the simulator
+        simulator_process = Process(
             target=StartView.run_simulator, args=(request, serializer)
         )
 
-        # Start the simulator thread
-        simulator_thread.start()
+        # Start the simulator process
+        simulator_process.start()
+
+        # Update the process ID of the simulator
+        simulator.process_id = simulator_process.pid
+
+        # save the new status and process ID
+        simulator.save()
 
         return Response(status=status.HTTP_200_OK)
 
@@ -189,8 +193,8 @@ class StopView(APIView):
             )
 
         # Stop the simulator
+        psutil.Process(simulator.process_id).terminate()
         simulator.status = "Failed"
-        simulator.stop_flag = True
         simulator.save()
 
         return Response(status=status.HTTP_200_OK)
