@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import SimulatorSerializer
-from .models import Simulator, Dataset
+from .models import Simulator
 from .timeseries_simulator.timeseries.timeseries_configurator.configurator_manager import (
     ConfiguratorManager,
 )
