@@ -4,7 +4,6 @@ import pandas as pd
 from .producer_interface import ProducerInterface
 from confluent_kafka import Producer
 import socket
-from rest_framework.serializers import ModelSerializer
 import json
 
 
