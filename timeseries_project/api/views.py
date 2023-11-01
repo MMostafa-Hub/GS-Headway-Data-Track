@@ -106,8 +106,9 @@ class StartView(APIView):
             if simulator.stop_flag:  # If the stop flag is True, stop the simulator
                 return
 
-            # Save the time series to the database
+            # Send the time series to the sink
             ProducerCreator("kafka").create(
+                serializer=serializer,
                 topic=simulator.sink_name,
                 host="localhost",
                 port=9092,

@@ -25,6 +25,8 @@ class DatasetSerializer(serializers.ModelSerializer):
             "cycle_amplitude",
             "cycle_frequency",
             "seasonality_components",
+            "generator_name",
+            "attribute_name",
         ]
 
 

@@ -51,7 +51,11 @@ class Dataset(models.Model):
         on_delete=models.CASCADE,
     )
 
-    time_series = models.JSONField(name="time_series", default=list)
+    # The generator name is for example the name of the sensor that generates the data
+    generator_name = models.CharField(max_length=100, name="generator_name")
+
+    # The attribute name is for example the physical quantity that the sensor measures
+    attribute_name = models.CharField(max_length=100, name="attribute_name")
 
 
 class SeasonalityComponent(models.Model):
