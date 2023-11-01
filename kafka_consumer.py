@@ -18,7 +18,7 @@ def print_assignment(consumer, partitions):
 topic = "sink_topic"
 
 # Subscribe to topic
-consumer.subscribe([topic], on_assign=print_assignment)
+consumer.subscribe([], on_assign=print_assignment)
 
 # Timeseries dataframe to store the data from the Kafka topic
 timeseries_df = pd.DataFrame(
