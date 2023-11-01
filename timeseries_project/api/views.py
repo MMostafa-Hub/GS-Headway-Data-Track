@@ -83,9 +83,7 @@ class StartView(APIView):
             This method is run in a separate thread.
         """
         # Get the dataset IDs associated with the simulator
-        dataset_ids = Simulator.objects.get(
-            name=request.data["name"]
-        ).datasets.values_list("id", flat=True)
+        datasets = Simulator.objects.get(name=request.data["name"]).datasets.values()
 
         # Get the simulator
         simulator = Simulator.objects.get(name=request.data["name"])
@@ -96,7 +94,7 @@ class StartView(APIView):
             .create_configurator(serializer=serializer)
             .configure()
         )
-        for time_series_params, dataset_id in zip(time_series_param_list, dataset_ids):
+        for time_series_params, dataset in zip(time_series_param_list, datasets):
             time_series_simulator = TimeSeriesSimulator(time_series_params)
             result_time_series = time_series_simulator.simulate()
 
@@ -108,12 +106,13 @@ class StartView(APIView):
 
             # Send the time series to the sink
             ProducerCreator("kafka").create(
-                serializer=serializer,
+                generator_name=dataset["generator_name"],
+                attribute_name=dataset["attribute_name"],
                 topic=simulator.sink_name,
                 host="localhost",
                 port=9092,
             ).produce(result_time_series)
-        
+
         simulator.status = "Succeeded"
         simulator.stop_flag = False
         simulator.save()
