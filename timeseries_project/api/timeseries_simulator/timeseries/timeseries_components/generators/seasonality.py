@@ -1,4 +1,4 @@
-from typing import override
+
 from .generator import Generator
 import pandas as pd
 import numpy as np
@@ -28,7 +28,7 @@ class SeasonalityGenerator(Generator):
         self.phase_shift = phase_shift
         self.multiplier = multiplier
 
-    @override
+
     def generate(self, time_index: pd.DatetimeIndex) -> pd.Series:
         """
         Generates a sinusoidal seasonality component for a time series.

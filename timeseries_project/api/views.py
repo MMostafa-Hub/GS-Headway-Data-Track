@@ -1,4 +1,3 @@
-from typing import override
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,7 +15,6 @@ import psutil
 
 
 class AddView(APIView):
-    @override
     def post(self, request) -> Response:
         """
         Adds a new simulator to the database.
@@ -37,7 +35,6 @@ class AddView(APIView):
 
 
 class StartView(APIView):
-    @override
     def post(self, request) -> Response:
         """
         Starts the simulator thread.
@@ -117,7 +114,6 @@ class StartView(APIView):
 
 
 class ListView(APIView):
-    @override
     def get(self, request) -> Response:
         """
         Returns the values of all the simulators in the database.
@@ -130,7 +126,6 @@ class ListView(APIView):
 
 
 class RestartView(APIView):
-    @override
     def post(self, request) -> Response:
         """
         Restarts the simulator thread, by starting a new thread and setting the stop flag to False.
@@ -167,7 +162,6 @@ class RestartView(APIView):
 
 
 class StopView(APIView):
-    @override
     def post(self, request) -> Response:
         """
         Stops the simulator thread, by setting the stop flag to True.
@@ -201,7 +195,6 @@ class StopView(APIView):
 
 
 class StatusView(APIView):
-    @override
     def get(self, request) -> Response:
         """
         Checks the status of the simulator.

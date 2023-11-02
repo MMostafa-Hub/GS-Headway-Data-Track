@@ -1,4 +1,4 @@
-from typing import override
+
 from .configurator_interface import ConfiguratorInterface
 import yaml
 from api.timeseries_simulator.timeseries.timeseries_simulator import (
@@ -16,7 +16,7 @@ class YamlConfigurator(ConfiguratorInterface):
         """
         self.path = path
 
-    @override
+
     def configure(self) -> list[TimeSeriesParams]:
         """
         Configures the simulator using a YAML configuration file.

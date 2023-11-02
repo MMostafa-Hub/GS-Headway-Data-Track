@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import override
 import pandas as pd
 from .producer_interface import ProducerInterface
 from confluent_kafka import Producer
@@ -50,7 +49,6 @@ class KafkaProducer(ProducerInterface):
             }
         )
 
-    @override
     def produce(self, time_series: pd.Series):
         """
         Produce and save data as a Kafka topic.

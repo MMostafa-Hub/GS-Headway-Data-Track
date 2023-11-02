@@ -10,7 +10,7 @@ class NormalizationTransformer(Transformer):
         super().__init__()
         self.feature_range = feature_range
 
-    @override
+
     def transform(self, time_series: pd.Series) -> pd.Series:
         """
         Normalize the time series data to a specified feature range.

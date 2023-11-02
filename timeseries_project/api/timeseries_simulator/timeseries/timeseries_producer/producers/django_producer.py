@@ -1,4 +1,3 @@
-from typing import override
 import pandas as pd
 from .producer_interface import ProducerInterface
 from django.db import models
@@ -20,7 +19,6 @@ class DjangoModelProducer(ProducerInterface):
         self.identifier = identifier
         self.model = model
 
-    @override
     def produce(self, time_series: pd.Series):
         """
         Produce and save data as a CSV file.

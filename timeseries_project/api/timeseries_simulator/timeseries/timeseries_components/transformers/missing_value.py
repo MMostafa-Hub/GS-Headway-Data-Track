@@ -1,4 +1,4 @@
-from typing import override
+
 from .transformer import Transformer
 import numpy as np
 import pandas as pd
@@ -10,7 +10,7 @@ class MissingValueTransformer(Transformer):
         self.missing_values_ratio = missing_values_ratio
         self.missing_indices: np.ndarray = np.array([])
 
-    @override
+
     def transform(self, time_series: pd.Series) -> pd.Series:
         """
         Add missing values to the time series data within a specified date range.
