@@ -4,3 +4,5 @@ numpy
 django
 PyYAML
 scikit-learn
+confluent-kafka
+apache-airflow
