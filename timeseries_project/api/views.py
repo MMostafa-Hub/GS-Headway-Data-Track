@@ -1,17 +1,9 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from .timeseries_simulator.timeseries.timeseries_scheduler.scheduler import Scheduler
 from .serializers import SimulatorSerializer
 from .models import Simulator
-from .timeseries_simulator.timeseries.timeseries_configurator.configurator_manager import (
-    ConfiguratorManager,
-)
-from .timeseries_simulator.timeseries.timeseries_producer.producer_creator import (
-    ProducerCreator,
-)
-from .timeseries_simulator.timeseries.timeseries_simulator import TimeSeriesSimulator
-from multiprocessing import Process
-import psutil
 
 
 class AddView(APIView):
@@ -47,70 +39,19 @@ class StartView(APIView):
         """
         try:
             simulator = Simulator.objects.get(name=request.data["name"])
-            serializer = SimulatorSerializer(simulator)
         except Exception:
             return Response(
                 data="This simulator doesn't exist", status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Start a new process to run the simulator, and associate it with the name of the simulator
-        simulator_process = Process(
-            target=StartView.run_simulator, args=(request, serializer)
-        )
-
-        # Start the simulator process
-        simulator_process.start()
+        # Start a new process for the simulator
+        Scheduler(simulator.name).start(simulator.interval)
 
         # Update the status of the simulator to "Running"
-        simulator = Simulator.objects.get(name=request.data["name"])
-        simulator.process_id = simulator_process.pid
         simulator.status = "Running"
         simulator.save()
 
         return Response(status=status.HTTP_200_OK)
-
-    @staticmethod
-    def run_simulator(request, serializer):
-        """
-        Runs the simulator and saves the results to the database.
-
-        Args:
-            request: The HTTP request object containing the name of the simulator.
-            serializer: The serializer for the simulator.
-
-        Note:
-            This method is run in a separate thread.
-        """
-        # Get the dataset IDs associated with the simulator
-        datasets = Simulator.objects.get(name=request.data["name"]).datasets.values()
-
-        # Get the simulator
-        simulator = Simulator.objects.get(name=request.data["name"])
-
-        # Get the time series parameters from the database
-        time_series_param_list = (
-            ConfiguratorManager("django")
-            .create_configurator(serializer=serializer)
-            .configure()
-        )
-        for time_series_params, dataset in zip(time_series_param_list, datasets):
-            time_series_simulator = TimeSeriesSimulator(time_series_params)
-            result_time_series = time_series_simulator.simulate()
-
-            # Check the simulator again to see if it has been stopped by StopView
-            simulator = Simulator.objects.get(name=request.data["name"])
-
-            # Send the time series to the sink
-            ProducerCreator("kafka").create(
-                generator_name=dataset["generator_name"],
-                attribute_name=dataset["attribute_name"],
-                topic=simulator.sink_name,
-                host="localhost",
-                port=9092,
-            ).produce(result_time_series)
-
-        simulator.status = "Succeeded"
-        simulator.save()
 
 
 class ListView(APIView):
@@ -138,23 +79,11 @@ class RestartView(APIView):
         """
         simulator = Simulator.objects.get(name=request.data["name"])
 
+        # Start a new process for the simulator
+        Scheduler(simulator.name).start(simulator.interval)
+
         # Update the status of the simulator to "Running"
         simulator.status = "Running"
-
-        # Get the serializer for the simulator
-        serializer = SimulatorSerializer(simulator)
-
-        # Start a new process for the simulator
-        simulator_process = Process(
-            target=StartView.run_simulator, args=(request, serializer)
-        )
-
-        # Start the simulator process
-        simulator_process.start()
-
-        # Update the process ID of the simulator
-        simulator.process_id = simulator_process.pid
-
         # save the new status and process ID
         simulator.save()
 
@@ -187,7 +116,7 @@ class StopView(APIView):
             )
 
         # Stop the simulator
-        psutil.Process(simulator.process_id).terminate()
+        Scheduler(simulator.name).stop()
         simulator.status = "Failed"
         simulator.save()
 
