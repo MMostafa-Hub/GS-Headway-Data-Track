@@ -30,5 +30,5 @@ class DjangoModelProducer(ProducerInterface):
         attribute.
         """
         self.model.objects.filter(id=self.identifier).update(
-            time_series=time_series.to_json()
+            sink_data=time_series.to_json()
         )
