@@ -171,7 +171,7 @@ cython_debug/
 airflow/
 
 # Ignore the dags folder in airflow
-timeseries_project/api/timeseries_simulator/timeseries/timeseries_scheduler/dags
+timeseries_project/api/timeseries_simulator/timeseries/timeseries_scheduler/dags/*
 
 # Ignore django api migrations
 timeseries_project/api/migrations
