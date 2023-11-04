@@ -42,6 +42,7 @@ class SimulatorSerializer(serializers.ModelSerializer):
             "type",
             "datasets",
             "sink_name",
+            "interval",
         ]
 
     def validate(self, attrs):

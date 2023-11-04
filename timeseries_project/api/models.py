@@ -27,9 +27,8 @@ class Simulator(models.Model):
     )
 
     sink_name = models.CharField(max_length=100, name="sink_name", default="sink_topic")
-
-    process_id = models.IntegerField(null=True, name="process_id")
-
+    
+    interval = models.CharField(name="interval", null=True, blank=True, max_length=100, default=None)
 
 class Dataset(models.Model):
     # This is the frequency of the time index used in pandas
@@ -56,6 +55,8 @@ class Dataset(models.Model):
 
     # The attribute name is for example the physical quantity that the sensor measures
     attribute_name = models.CharField(max_length=100, name="attribute_name")
+
+    sink_data = models.JSONField(name="sink_data", default=list)
 
 
 class SeasonalityComponent(models.Model):
