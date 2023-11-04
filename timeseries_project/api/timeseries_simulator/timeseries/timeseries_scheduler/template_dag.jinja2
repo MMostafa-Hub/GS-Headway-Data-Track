@@ -1,0 +1,26 @@
+from airflow import DAG
+from airflow.decorators import task
+import os
+import django
+from datetime import datetime
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "timeseries_project.settings")
+django.setup()
+
+
+with DAG(
+    dag_id="simulator_{{dag_id}}",
+    start_date=datetime.now(),
+    schedule_interval="{{interval}}",
+) as dag:
+    from api.timeseries_simulator.timeseries.timeseries_scheduler.scheduler import (
+        Scheduler,
+    )
+
+    @task
+    def run_simulation():
+        Scheduler.run_simulator(
+            simulator_name="{{simulator_name}}",
+        )
+
+    run_simulation()
