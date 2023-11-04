@@ -169,3 +169,6 @@ cython_debug/
 
 # Ignore airflow logs
 airflow/
+
+# Ignore the dags folder in airflow
+timeseries_project/api/timeseries_simulator/timeseries/timeseries_scheduler/dags
