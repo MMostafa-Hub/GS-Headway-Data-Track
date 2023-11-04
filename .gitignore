@@ -166,3 +166,6 @@ cython_debug/
 
 # Ignore any csv files generated from the kafka consumer
 *.csv
+
+# Ignore airflow logs
+airflow/
