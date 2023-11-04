@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, List
+from typing import Any, Dict, List
 import pandas as pd
 from api.timeseries_simulator.timeseries.timeseries_components.generators.seasonality import (
     SeasonalityGenerator,
@@ -28,7 +28,7 @@ class ConfiguratorInterface(ABC):
         pass
 
     @staticmethod
-    def _params(config: dict[str, Any]) -> List[TimeSeriesParams]:
+    def _params(config: Dict[str, Any]) -> List[TimeSeriesParams]:
         """Unpacks the config and returns a list of time series parameters.
 
         Args:

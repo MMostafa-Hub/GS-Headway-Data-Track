@@ -1,5 +1,6 @@
 
 
+from typing import List
 from .configurator_interface import ConfiguratorInterface
 from rest_framework import serializers
 from api.timeseries_simulator.timeseries.timeseries_simulator import (
@@ -18,7 +19,7 @@ class DjangoConfigurator(ConfiguratorInterface):
         self.serializer = serializer
 
 
-    def configure(self) -> list[TimeSeriesParams]:
+    def configure(self) -> List[TimeSeriesParams]:
         """
         Configures the simulator using the Django serializer.
 

@@ -1,4 +1,4 @@
-
+from typing import List
 from .configurator_interface import ConfiguratorInterface
 import yaml
 from api.timeseries_simulator.timeseries.timeseries_simulator import (
@@ -16,8 +16,7 @@ class YamlConfigurator(ConfiguratorInterface):
         """
         self.path = path
 
-
-    def configure(self) -> list[TimeSeriesParams]:
+    def configure(self) -> List[TimeSeriesParams]:
         """
         Configures the simulator using a YAML configuration file.
 
