@@ -1,7 +1,7 @@
 from .generator import Generator
 import pandas as pd
 import numpy as np
-from typing import List, override
+from typing import List
 
 
 class TrendGenerator(Generator):

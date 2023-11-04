@@ -2,7 +2,7 @@ from .transformer import Transformer
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from typing import Tuple, override
+from typing import Tuple
 
 
 class NormalizationTransformer(Transformer):
