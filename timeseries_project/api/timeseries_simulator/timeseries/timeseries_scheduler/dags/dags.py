@@ -16,6 +16,7 @@ for simulator in simulators:
             dag_id=simulator.name,
             schedule_interval=simulator.interval,
             start_date=simulator.start_date,
+            is_paused_upon_creation=False,
         ) as dag:
             from api.timeseries_simulator.timeseries.timeseries_scheduler.scheduler import (
                 Scheduler,
