@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Simulator(models.Model):
@@ -27,8 +28,15 @@ class Simulator(models.Model):
     )
 
     sink_name = models.CharField(max_length=100, name="sink_name", default="sink_topic")
-    
-    interval = models.CharField(name="interval", null=True, blank=True, max_length=100, default=None)
+
+    interval = models.CharField(
+        name="interval", null=True, blank=True, max_length=100, default=None
+    )
+
+    start_date = models.DateTimeField(
+        name="start_date", null=True, blank=True, default=timezone.now
+    )
+
 
 class Dataset(models.Model):
     # This is the frequency of the time index used in pandas
