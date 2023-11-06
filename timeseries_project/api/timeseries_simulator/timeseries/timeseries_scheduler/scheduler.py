@@ -39,7 +39,8 @@ class Scheduler:
         process.start()
 
         # Store the process ID in the dictionary.
-        Scheduler.__name_to_pid[process.name] = process.pid
+        Scheduler.__name_to_pid[self.simulator_name] = process.pid
+        print(Scheduler.__name_to_pid)
 
     @staticmethod
     def run_simulator(simulator_name):
@@ -69,7 +70,7 @@ class Scheduler:
             .create_configurator(serializer=serializer)
             .configure()
         )
-
+        
         for time_series_params, dataset in zip(time_series_param_list, datasets):
             time_series_simulator = TimeSeriesSimulator(time_series_params)
             result_time_series = time_series_simulator.simulate()
@@ -82,10 +83,6 @@ class Scheduler:
                 host="localhost",
                 port=9092,
             ).produce(result_time_series)
-
-            # ProducerCreator("django").create(
-            #     identifier=dataset["id"], model=Dataset
-            # ).produce(result_time_series)
 
         simulator.status = "Succeeded"
         simulator.save()
@@ -100,6 +97,14 @@ class Scheduler:
         if not simulator_pid:
             raise Exception(f"No process with name: {self.simulator_name} exists.")
 
-        # Terminate the process.
-        psutil.Process(simulator_pid).terminate()
+        try:
+            process = psutil.Process(simulator_pid)
+            process.terminate()  # terminate the process
+
+        except psutil.NoSuchProcess:
+            print(f"No process with PID {simulator_pid} exists.")
+        except psutil.AccessDenied:
+            print(f"Access denied when trying to terminate process {simulator_pid}.")
+
+        # Delete
         del Scheduler.__name_to_pid[self.simulator_name]
