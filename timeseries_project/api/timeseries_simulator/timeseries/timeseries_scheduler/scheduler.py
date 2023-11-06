@@ -1,4 +1,4 @@
-from jinja2 import Environment, FileSystemLoader
+import time
 from multiprocessing import Process
 import psutil
 import os
@@ -9,12 +9,12 @@ from api.timeseries_simulator.timeseries.timeseries_configurator.configurator_ma
 from api.timeseries_simulator.timeseries.timeseries_producer.producer_creator import (
     ProducerCreator,
 )
-from api.models import Simulator, Dataset
 from api.timeseries_simulator.timeseries.timeseries_simulator import (
     TimeSeriesSimulator,
 )
 import django
 
+# Set the Django settings module for airflow
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "timeseries_project.settings")
 django.setup()
 
@@ -22,46 +22,25 @@ django.setup()
 class Scheduler:
     # A dictionary to store the mapping of process name to process ID.
     __name_to_pid = {}
-    __dag_id = 0
 
     def __init__(self, simulator_name):
         """
-        target (function): The function to be scheduled.
-        args: arguments to be passed to the target function.
+        simulator_name: The name of the simulator to run.
         """
         self.simulator_name = simulator_name
-        self.interval = None
-
-        # Creating a jinja2 template for the DAG file.
-        file_dir = os.path.dirname(os.path.abspath(__file__))
-        env = Environment(loader=FileSystemLoader(file_dir))
-        self.__template = env.get_template("template_dag.jinja2")
 
     def start(self, interval=None):
         """
         Starts the execution of the process.
-        interval: CRON expression for the interval at which the scheduler should run.
         """
-        if not interval:
-            # Create a process for the simulator.
-            self.process = Process(
-                target=Scheduler.run_simulator, args=(self.simulator_name,)
-            )
+        # Create a process for the simulator.
+        process = Process(target=Scheduler.run_simulator, args=(self.simulator_name,))
 
-            self.process.start()
+        # Start the process.
+        process.start()
 
-            # Store the process ID in the dictionary.
-            Scheduler.__name_to_pid[self.process.name] = self.process.pid
-            return
-
-        # Store the interval.
-        self.interval = interval
-
-        # Generate a DAG file for the airflow task.
-        self.__generate_dag()
-
-        # Make the value of the pid as 0, as it's not a process but rather an airflow task.
-        Scheduler.__name_to_pid[self.process.name] = 0
+        # Store the process ID in the dictionary.
+        Scheduler.__name_to_pid[process.name] = process.pid
 
     @staticmethod
     def run_simulator(simulator_name):
@@ -74,6 +53,8 @@ class Scheduler:
         Note:
             This method is run in a separate process or an airflow task.
         """
+        from api.models import Simulator
+
         # Get the simulator
         simulator = Simulator.objects.get(name=simulator_name)
 
@@ -103,33 +84,12 @@ class Scheduler:
                 port=9092,
             ).produce(result_time_series)
 
-            ProducerCreator("django").create(
-                identifier=dataset["id"], model=Dataset
-            ).produce(result_time_series)
+            # ProducerCreator("django").create(
+            #     identifier=dataset["id"], model=Dataset
+            # ).produce(result_time_series)
 
         simulator.status = "Succeeded"
         simulator.save()
-
-    def __generate_dag(self):
-        """
-        Generates a DAG file for the airflow task.
-        """
-        # Create a DAG file for the airflow task.
-        dag_file = self.__template.render(
-            dag_id=Scheduler.__dag_id,
-            interval=self.interval,
-            simulator_name=self.simulator_name,
-        )
-
-        # Increment the DAG ID.
-        Scheduler.__dag_id += 1
-
-        # Create a DAG file for the airflow task.
-        with open(
-            f"./api/timeseries_simulator/timeseries/timeseries_scheduler/dags/dag_{Scheduler.__dag_id}.py",
-            "w",
-        ) as file:
-            file.write(dag_file)
 
     def stop(self):
         """
@@ -138,13 +98,9 @@ class Scheduler:
         simulator_pid = Scheduler.__name_to_pid.get(self.simulator_name, None)
 
         # Check if the process exists.
-        if simulator_pid is None:
-            return
+        if not simulator_pid:
+            raise Exception(f"No process with name: {self.simulator_name} exists.")
 
-        # Check if the process is an airflow task.
-        if simulator_pid == 0:
-            # Delete the DAG file.
-            return
-
+        # Terminate the process.
         psutil.Process(simulator_pid).terminate()
         del Scheduler.__name_to_pid[self.simulator_name]
