@@ -57,6 +57,11 @@ class Query(graphene.ObjectType):
         SimulatorType, name=graphene.String(required=True)
     )
 
+    # Query to get the simulators by sink name
+    simulators_by_sink_name = graphene.List(
+        SimulatorType, sink_name=graphene.String(required=True)
+    )
+
     def resolve_all_simulators(self, info):
         return Simulator.objects.all()
 
@@ -65,6 +70,12 @@ class Query(graphene.ObjectType):
             return Simulator.objects.get(name=name)
         except Simulator.DoesNotExist:
             return None
-    
+
+    def resolve_simulators_by_sink_name(self, info, sink_name):
+        try:
+            return Simulator.objects.filter(sink_name=sink_name)
+        except Simulator.DoesNotExist:
+            return None
+
 
 schema = graphene.Schema(query=Query)
