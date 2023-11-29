@@ -90,8 +90,28 @@ class CreateSimulator(graphene.Mutation):
         return CreateSimulator(simulator=simulator)
 
 
+class UpdateSimulatorStatus(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        status = graphene.String(required=True)
+
+    simulator = graphene.Field(lambda: SimulatorType)
+
+    @classmethod
+    def mutate(cls, root, info, name, status):
+        simulator = Simulator.objects.get(name=name)
+        if simulator is None:
+            raise Exception("Invalid Simulator Name")
+
+        simulator.status = status
+        simulator.save()
+
+        return UpdateSimulatorStatus(simulator=simulator)
+
+
 class Mutation(graphene.ObjectType):
     create_simulator = CreateSimulator.Field()
+    update_simulator_status = UpdateSimulatorStatus.Field()
 
 
 class Query(graphene.ObjectType):
