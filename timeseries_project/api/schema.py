@@ -44,6 +44,7 @@ class SimulatorType(DjangoObjectType):
             "datasets",
             "sink_name",
             "interval",
+            "status",
         ]
 
 
@@ -131,6 +132,9 @@ class Query(graphene.ObjectType):
         limit=graphene.Int(),
     )
 
+    # Query to return only the status of the simulator
+    get_simulator_status = graphene.String(name=graphene.String(required=True))
+
     def resolve_list_all_simulators(self, info):
         return Simulator.objects.all()
 
@@ -173,6 +177,13 @@ class Query(graphene.ObjectType):
             simulators = simulators.filter(interval=interval)
 
         return simulators
+
+    def resolve_get_simulator_status(self, info, name):
+        simulator = Simulator.objects.get(name=name)
+        if simulator is None:
+            raise Exception("Invalid Simulator Name")
+        
+        return simulator.status
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
