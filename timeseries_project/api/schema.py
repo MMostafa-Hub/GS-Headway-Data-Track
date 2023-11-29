@@ -150,12 +150,11 @@ class Query(graphene.ObjectType):
         data_size=None,
         interval=None,
         status=None,
-        limit=None,
     ):
         """
         Query to get the simulators by name, sink name, start data, end date, data size, type
         """
-        simulators = Simulator.objects.all().first(limit)
+        simulators = Simulator.objects.all()
 
         if name:
             simulators = simulators.filter(name=name)
