@@ -129,6 +129,7 @@ class Query(graphene.ObjectType):
         end_date=graphene.DateTime(),
         data_size=graphene.Int(),
         interval=graphene.String(),
+        status=graphene.String(),
         limit=graphene.Int(),
     )
 
