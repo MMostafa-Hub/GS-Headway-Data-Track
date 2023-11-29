@@ -148,6 +148,7 @@ class Query(graphene.ObjectType):
         end_date=None,
         data_size=None,
         interval=None,
+        status=None,
         limit=None,
     ):
         """
@@ -176,13 +177,16 @@ class Query(graphene.ObjectType):
         if interval:
             simulators = simulators.filter(interval=interval)
 
+        if status:
+            simulators = simulators.filter(status=status)
+
         return simulators
 
     def resolve_get_simulator_status(self, info, name):
         simulator = Simulator.objects.get(name=name)
         if simulator is None:
             raise Exception("Invalid Simulator Name")
-        
+
         return simulator.status
 
 
